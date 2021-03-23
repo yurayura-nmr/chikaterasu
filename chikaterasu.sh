@@ -3,7 +3,7 @@
 : '
 *************************************************************
 Chikaterasu         version dev
-gmx                 version 2018
+gmx                 tested for versions 2018, 2019
                     Parts of the no-protein setup seem not to
                     work with gmx 2019
 
@@ -11,10 +11,13 @@ Last change         2021-2-27
                     Added Mg ion functionality  [tested a bit, but may still have bugs]
                     Added insert molecules      [tested a bit, but may still have bugs]
 
+Erik Walinda
 Kyoto University
 Graduate School of Medicine
-Erik Walinda
 
+To do               Debug gromacs errors for new version
+                    Check gromacs warnings for consistency
+                    Set debug level from argline
 *************************************************************
 '
 
@@ -88,8 +91,8 @@ Setup directories for the run
 *************************************************************
 '
 
-node_name=$(hostname)   # for email report
-gromacs_version="2018"  # for email report
+node_name=$(hostname)   # for report; to do: make report
+gromacs_version="2018"  # for report; to do: get from gmx output
 
 
 mkdir -p gromacs
@@ -398,4 +401,3 @@ do
 done
 
 exit 1
- 
