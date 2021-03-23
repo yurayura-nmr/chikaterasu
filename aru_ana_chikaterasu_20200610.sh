@@ -2,11 +2,11 @@
 
 : '
 *************************************************************
-Chikaterasu
+Chikaterasu Analysis
 
+Erik Walinda
 Kyoto University
 Graduate School of Medicine
-Erik Walinda
 
 Last change: 2020-6-10
 
