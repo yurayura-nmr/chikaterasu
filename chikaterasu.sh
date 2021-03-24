@@ -324,6 +324,11 @@ for i in `seq 1 $nruns`;
 
 do
         # 1. NVT
+        # NVT also generates a warning in the newer gromacs versions like this:
+        #     Removing center of mass motion in the presence of position restraints
+        #     might cause artifacts. When you are using position restraints to
+        #     equilibrate a macro-molecule, the artifacts are usually negligible.
+        # I never saw any problems here and gromacs also thinks it is fine like this.
         cd runs/nvt
         cp ../../chika_mdp/nvt.mdp ./nvt.mdp
 
