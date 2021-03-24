@@ -1,18 +1,21 @@
-; md.mdp 
+; md.mdp
+; For amber99sb-ildn forcefield
+; Lindorff‐Larsen, Kresten, et al. "Improved side‐chain torsion potentials for the Amber ff99SB protein force field."
+; Proteins: Structure, Function, and Bioinformatics 78.8 (2010): 1950-1958.
 
-integrator		= md		; leap-frog integrator
-nsteps			= 50000000	; in ps
-dt			= 0.002		; thus, 2 fs
+integrator = md  ; leap-frog integrator
 
-; == Output control ==
+; Simulation length
+nsteps  = 50000000	; 100 ns
+dt			= 0.002		  ; thus, 2 fs
 
-nstxout		        = 10000		; save coordinates every 20.0 ps [may further increase this]
-nstvout		        = 10000		; save velocities every 20.0 ps
-nstenergy	        = 10000		; save energies every 20.0 ps
-nstlog		        = 10000		; update log file every 20.0 ps
-nstxout-compressed  	= 10000      	; save compressed coordinates every 20.0 ps
-                        	        ; nstxout-compressed replaces nstxtcout
-compressed-x-grps   	= System    	; replaces xtc-grps
+; Output
+nstxout	  = 10000  ; save coordinates every 20.0 ps [can increase this to save disk space]
+nstvout	  = 10000  ; save velocities every 20.0 ps
+nstenergy	= 10000  ; save energies every 20.0 ps
+nstlog    = 10000  ; update log file every 20.0 ps
+nstxout-compressed = 10000   ; save compressed coordinates every 20.0 ps. nstxout-compressed replaces nstxtcout
+compressed-x-grps  = System  ; replaces xtc-grps
 
 ; == Chemical Bond parameters ==
 
@@ -28,8 +31,8 @@ cutoff-scheme   	= Verlet
 ns_type		    	= grid		; search neighboring grid cells
 nstlist		    	= 50	    	; 20 fs, largely irrelevant with Verlet scheme
 rcoulomb	    	= 0.8		; short-range electrostatic cutoff (in nm)
-rvdw		    	= 0.8		; short-range van der Waals cutoff (in nm)
-rlist                   = 0.8		; short-range neighborlist cutoff (in nm)
+rvdw		    	= 1.0		; short-range van der Waals cutoff (in nm)
+rlist                   = 1.05		; short-range neighborlist cutoff (in nm)
 
 ; == Electrostatics ==
 
