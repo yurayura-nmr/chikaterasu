@@ -167,6 +167,11 @@ fi
 *************************************************************
 Solvate the protein 
 If defined set the box dimensions manually
+
+Gromacs will print a warning starting with:
+[WARNING: Masses and atomic (Van der Waals) radii will be guessed ...]
+... but that is fine.
+See: https://www.researchgate.net/post/MD-simulation-using-gromacs-using-the-command-gmx-solvate
 *************************************************************
 '
 
@@ -198,8 +203,12 @@ fi
 *************************************************************
 Add ions
 
-GROMACS will complain that charge is not neutral.
-But of course we want to neutralize it.
+On some builds GROMACS will complain that charge is not neutral.
+Although the charge is like 0.0000001. So it might be a precision
+issue. But of course we want to neutralize it.
+The maxwarn flag helps in such a case. Otherwise, recompile
+and hope for better results. Just make sure the topology
+of the system is neutral at the end.
 *************************************************************
 '
 
