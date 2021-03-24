@@ -21,14 +21,15 @@ compressed-x-grps  = System  ; replaces xtc-grps
 ; Chemistry and bonds
 continuation          = yes  ; Production MD continues after equilibration NPT simulation 
 constraint_algorithm  = lincs  ; holonomic constraints 
-constraints           = all-bonds  ; all bonds (even heavy atom-H bonds) constrained
+constraints           = h-bonds  ; Lindorff‐Larsen (2010)
+;constraints          = all-bonds  ; all bonds (even heavy atom-H bonds) constrained
 lincs_iter            = 1  ; accuracy of LINCS
 lincs_order           = 4  ; also related to accuracy
 
 ; Neighborsearching
 cutoff-scheme = Verlet
 ns_type       = grid  ; search neighboring grid cells
-nstlist       = 50    ; 20 fs, largely irrelevant with Verlet scheme
+nstlist       = 50    ; 20 fs, largely irrelevant with Verlet scheme; will be changed by gmx mdrun during the simulation.
 rvdw          = 1.0   ; short-range van der Waals cutoff (in nm) - Lindorff‐Larsen (2010)
 rlist         = 1.05  ; short-range neighborlist cutoff (in nm)
 
