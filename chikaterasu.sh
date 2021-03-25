@@ -333,7 +333,7 @@ do
         cp ../../chika_mdp/nvt.mdp ./nvt.mdp
 
         gmx grompp -f ./nvt.mdp -c ../../gromacs/emin/em.gro -r ../../gromacs/emin/em.gro -p ../../gromacs/top/topol.top -o nvt.tpr -maxwarn 1
-        gmx mdrun -deffnm nvt
+        gmx mdrun -deffnm nvt -nb gpu
 
         if [ "$debug_level" = 5 ] ; then
             echo "[Chikaterasu] Debug level 5 set. Exiting after NVT equilibration."
@@ -348,7 +348,7 @@ do
         cp ../../chika_mdp/npt.mdp ./npt.mdp
 
         gmx grompp -f ./npt.mdp -c ../nvt/nvt.gro -r ../nvt/nvt.gro -t ../nvt/nvt.cpt -p ../../gromacs/top/topol.top -o npt.tpr -maxwarn 1
-        gmx mdrun -deffnm npt
+        gmx mdrun -deffnm npt -nb gpu
 
         if [ "$debug_level" = 6 ] ; then
             echo "[Chikaterasu] Debug level 6 set. Exiting after NPT equilibration."
