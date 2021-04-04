@@ -15,8 +15,8 @@ Erik Walinda
 Kyoto University
 Graduate School of Medicine
 
-To do               Debug gromacs errors for new version
-                    Check gromacs warnings for consistency
+To do               re-add dssp function: 
+                    gmx xpm2ps -f ss.xpm -di dssp.m2p
                     Set debug level from argline
 *************************************************************
 '
