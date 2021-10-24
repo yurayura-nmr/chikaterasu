@@ -7,9 +7,7 @@ gmx                 tested for versions 2018, 2019
                     Parts of the no-protein setup seem not to
                     work with gmx 2019
 
-Last change         2021-2-27
-                    Added Mg ion functionality  [tested a bit, but may still have bugs]
-                    Added insert molecules      [tested a bit, but may still have bugs]
+Last change         see github
 
 Erik Walinda
 Kyoto University
@@ -111,6 +109,7 @@ mkdir -p runs
 mkdir -p runs/nvt
 mkdir -p runs/npt
 mkdir -p runs/md
+mkdir -p custom_analysis
 
 : '
 *************************************************************
