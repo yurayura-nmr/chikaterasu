@@ -81,6 +81,8 @@ box_empty=false             # Water-only simulation
 box_dim="    7.845   6.497   6.363 "  # if necessary to specify the size. e.g. ATP, rheoMD, hydrodynamics, check PBC artifacts
 cell_shape="triclinic"        # -d: triclinic, cubic, dodecahedron, octahedron
 
+water="spce"                # [spce], spc, tip3p, tip4p, tip5p, tips3p
+
 : '
 *************************************************************
 If well programmed no change should be necessary from here
@@ -125,11 +127,11 @@ cd gromacs/coord
 
 if [ "$insert_small_molecules" = false ] ; then
     if [ "$his_manual" = true ] ; then
-        gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water spce -chainsep interactive -ignh -rtpres -merge interactive -his
+        gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive -his
     fi
 
     if [ "$his_manual" = false ] ; then
-        gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water spce -chainsep interactive -ignh -rtpres -merge interactive
+        gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
     fi
 fi
 
@@ -140,13 +142,13 @@ if [ "$insert_small_molecules" = true ] ; then
     if [ "$protein_with_small_molecules" = false ]; then
         echo "" > empty.pdb
         gmx insert-molecules -f empty.pdb -ci $protein_name.pdb -o teibunshibox.pdb -nmol $insert_small_molecules_number -box $box_dim
-        gmx pdb2gmx -f teibunshibox.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water spce -chainsep interactive -ignh -rtpres -merge interactive
+        gmx pdb2gmx -f teibunshibox.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
     fi
 
     # New: Case c: small molecule and protein. Add molecule to a copy for the initial protein file.
     if [ "$protein_with_small_molecules" = true ]; then
         gmx insert-molecules -f $protein_name.pdb -ci $protein_added_small_molecule_name.pdb -o protein_with_added_molecules.pdb -nmol $insert_small_molecules_number -box $box_dim
-        gmx pdb2gmx -f protein_with_added_molecules.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water spce -chainsep interactive -ignh -rtpres -merge interactive
+        gmx pdb2gmx -f protein_with_added_molecules.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
     fi
 fi
 
