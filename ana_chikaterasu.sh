@@ -28,7 +28,7 @@ etc.
 cleanup=true
 
 # == Most important parameters (most often set wrong :)) ==
-dna=true            # DNA or protein?
+dna=false            # DNA or protein?
 fit=true            # rot_trans fit before analysis. AVOID for RheoMD if studying alignment
 pbc=nojump          # mol or nojump
 
@@ -59,7 +59,7 @@ signedPaxis=false   # may not correctly work with 3DNA for now ... (does not alw
 dssp=false
 
 # == Dimers, hexamers or multiple chains? ==
-indexFileProvided=true      # give a chika.ndx file in main folder to specify what to analyze
+indexFileProvided=false     # give a chika.ndx file in main folder to specify what to analyze
 nchains=3                   # number of chains in the chika.ndx file 
 
 
