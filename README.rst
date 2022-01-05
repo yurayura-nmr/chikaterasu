@@ -1,7 +1,11 @@
 Chikaterasu
 ===========
 
-Shell script to automate setup of multiple identical MD simulations.
+.. image:: logo.png
+   :alt: Chikaterasu logo
+   :align: right
+
+Bash script to automate setup of multiple identical MD simulations.
 MD parameters are for the amber99sb-ildn forcefield.
 
 2021-10-24
