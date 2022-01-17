@@ -325,11 +325,13 @@ do
       cd hbond
       printf "MainChain+H\nMainChain+H" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn hbond.ndx -num protein_protein.xvg -dt $dt
 
-      # Extract hydrogen bonds
+      # Extract hydrogen bonds in form of a nice table from the gmx hbond output using Justin's script
+      # Syntax of plot_hbmap.pl requires that the .ndx file
+      # contains only the [hbonds...] section (e.g. [ hbonds_MainChain+H ]) and only the atom numbers herein.
+      # Thus, edit ndx using awk so that only this section is in the data.
       awk '/hbond/{y=1;next}y' hbond.ndx > analyze.ndx
       plot_hbmap.pl -s ../target.pdb -map hbmap.xpm -index analyze.ndx
-      #exit 1
-
+      
       printf "Protein\nProtein" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn -num backbone_backbone.xvg -dt $dt
 
       #printf "Protein\nWater" | gmx hbond -f md_full.xtc -s md.tpr -num hbond/protein_water.xvg
