@@ -8,11 +8,9 @@ Erik Walinda
 Kyoto University
 Graduate School of Medicine
 
-Last change: 2020-6-10
+Last change: 2021-1-17
 
-chika.ndx for splitch analysis added to RMSD function
-
-gmx version         2018
+gmx version         2021
 chikaterasu version dev
 *************************************************************
 '
