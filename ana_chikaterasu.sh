@@ -9,6 +9,7 @@ Kyoto University
 Graduate School of Medicine
 
 Last change: 2021-1-17
+Added minimum distance matrix
 
 gmx version         2021
 chikaterasu version dev
@@ -40,13 +41,15 @@ on_the_fly=false    # analyze a currently active run?
 rmsd=true
 rmsf=true
 traj=true
-dt=1000             # time interval for frame extraction [ps] 
+dt=10               # time interval for various analysis functions [ps] 
 vmd=false
-gyration=true       # Calculate R_gyr
+gyration=false      # Calculate R_gyr
 hbond=false
 distance=false
 sasa=false
 pca=false
+contactmap=false    # Draw contact map (mean-smallest-distance map)
+
 
 hbond_ATP=false     # Custom function for ATP research; have to specify group number "13" instead of name "ATP" bug?
 domain_angle=false  # Custom function for diUb research
@@ -136,6 +139,7 @@ do
   mkdir -p results/$proc_folder/distance
   mkdir -p results/$proc_folder/domain_angle
   mkdir -p results/$proc_folder/paxis
+  mkdir -p results/$proc_folder/contact_map
 
   : '
   *************************************************************
@@ -337,6 +341,24 @@ do
           printf "Protein\n13" | gmx hbond -f ../md_full.xtc -s ../md.tpr -num protein_ATP.xvg
           printf "Water\n13" | gmx hbond -f ../md_full.xtc -s ../md.tpr -num ATP_water.xvg
       fi
+      cd ..
+  fi
+
+  : '
+  *************************************************************
+  Contact map
+  Untested
+  *************************************************************
+  '
+  if [ "$contactmap" = true ] ; then
+      cd contact_map 
+
+      # Make xpm file
+      printf "MainChain+H" | gmx mdmat -f ../md_target.xtc -s ../md_target.tpr -dt $dt
+      
+      # Convert to eps for viewing
+      gmx xpm2ps -f dm.xpm
+                          
       cd ..
   fi
 
