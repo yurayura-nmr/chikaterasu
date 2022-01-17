@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+# (Further explanation in anachika script)
 #
 # plot_hbmap.pl - plot the probability of finding a particular hydrogen bond
 # based on several input files:
