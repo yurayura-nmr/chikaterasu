@@ -13,7 +13,10 @@ Erik Walinda
 Kyoto University
 Graduate School of Medicine
 
-To do               re-add dssp function: 
+To do               Did not yet test modification of mv at the end (data storage)
+                    Sometimes did not store folders correctly. i.e., md_1 inside md etc.
+                    
+                    re-add dssp function: 
                     gmx xpm2ps -f ss.xpm -di dssp.m2p
                     Set debug level from argline
 *************************************************************
@@ -404,12 +407,17 @@ do
         cd ../..
 
         # Copy the data
-        mv runs/md runs/md_$i
-        mv runs/nvt runs/nvt_$i
-        mv runs/npt runs/npt_$i
-        mkdir runs/md
-        mkdir runs/nvt
-        mkdir runs/npt
+        mkdir -p runs/md_$i
+        mkdir -p runs/nvt_$i
+        mkdir -p runs/npt_$i
+        
+        mv runs/md runs/md_$i/
+        mv runs/nvt runs/nvt_$i/
+        mv runs/npt runs/npt_$i/
+        
+        mkdir -p runs/md
+        mkdir -p runs/nvt
+        mkdir -p runs/npt
  
         # End the run
         echo [Chikaterasu] Run $i finished. Yay!
