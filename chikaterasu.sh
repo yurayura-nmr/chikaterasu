@@ -411,9 +411,9 @@ do
         mkdir -p runs/nvt_$i
         mkdir -p runs/npt_$i
         
-        mv runs/md runs/md_$i/
-        mv runs/nvt runs/nvt_$i/
-        mv runs/npt runs/npt_$i/
+        mv runs/md/* runs/md_$i/
+        mv runs/nvt/* runs/nvt_$i/
+        mv runs/npt/* runs/npt_$i/
         
         mkdir -p runs/md
         mkdir -p runs/nvt
