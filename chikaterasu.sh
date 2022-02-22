@@ -75,7 +75,7 @@ magnesium=false             # Set Mg as the positive ion; if false it is Na.
 insert_small_molecules=false       # If we want to simulate small molecules like ATP or sialic acid
 insert_small_molecules_number=2
 
-protein_with_small_molecules=true
+protein_with_small_molecules=false
 protein_added_small_molecule_name="ATP"  # File needs to be in gromacs/coord folder; i.e., together with the protein.
 
 box_manual=false            # Specify box-size manually. 
