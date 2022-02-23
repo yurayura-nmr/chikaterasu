@@ -82,9 +82,11 @@ box_manual=false            # Specify box-size manually.
 box_empty=false             # Water-only simulation
 
 box_dim="    7.845   6.497   6.363 "  # if necessary to specify the size. e.g. ATP, rheoMD, hydrodynamics, check PBC artifacts
-cell_shape="triclinic"        # -d: triclinic, cubic, dodecahedron, octahedron
+cell_shape="triclinic"      # -d: triclinic, cubic, dodecahedron, octahedron
 
-water="spce"                # [spce], spc, tip3p, tip4p, tip5p, tips3p
+water="tip4p"               # [spce], spc, tip3p, tip4p, tip5p, tips3p
+water_file="tip4p.gro"      # spc216.gro, tip4p.gro, ... (inside ff directory)
+
 
 : '
 *************************************************************
@@ -194,7 +196,7 @@ if [ "$box_empty" = true ] ; then
     echo "$box_dim" >> $protein_name.pdb_newbox.gro
 fi
 
-gmx solvate -cp ./$protein_name.pdb_newbox.gro -cs spc216.gro -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+gmx solvate -cp ./$protein_name.pdb_newbox.gro -cs $water_file -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
 
 cd ../..
 
