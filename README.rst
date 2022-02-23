@@ -6,7 +6,8 @@ Chikaterasu
    :align: right
 
 Bash script to automate setup of multiple identical MD simulations.
-MD parameters are for the amber99sb-ildn forcefield.
+MD parameters are for the amber-type forcefields such as amber99sb-ildn
+and amber03ws.
 
 2021-10-24
 ----------
