@@ -84,8 +84,8 @@ box_empty=false             # Water-only simulation
 box_dim="    7.845   6.497   6.363 "  # if necessary to specify the size. e.g. ATP, rheoMD, hydrodynamics, check PBC artifacts
 cell_shape="triclinic"      # -d: triclinic, cubic, dodecahedron, octahedron
 
-water="tip4p"               # [spce], spc, tip3p, tip4p, tip5p, tips3p
-water_file="tip4p.gro"      # spc216.gro, tip4p.gro, ... (inside ff directory)
+water="tip4p"               # [spce], spc, tip3p, tip4p, tip5p, ... (for tip4p2005, use tip4p and replace itp file)
+water_file="tip4p.gro"      # spc216.gro, tip4p.gro, ..., or explicitly with directory (amber03ws.ff/tip4p2005.gro)
 
 
 : '
