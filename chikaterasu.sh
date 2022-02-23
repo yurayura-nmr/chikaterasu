@@ -43,7 +43,7 @@ Debug level
 # == What to simulate ? ==
 
 protein_name="1UBQ"         # For small molecule simulations, this will be ATP.pdb etc. even though the variable name says protein.
-nruns=3                     # 1 for testing; 10 for production
+nruns=1                     # 1 for testing; 10 for production
 
 # == Debug level ==
 
@@ -85,7 +85,7 @@ box_dim="    7.845   6.497   6.363 "  # if necessary to specify the size. e.g. A
 cell_shape="triclinic"      # -d: triclinic, cubic, dodecahedron, octahedron
 
 water="tip4p"               # [spce], spc, tip3p, tip4p, tip5p, ... (for tip4p2005, use tip4p and replace itp file)
-water_file="tip4p.gro"      # spc216.gro, tip4p.gro, ..., or explicitly with directory (amber03ws.ff/tip4p2005.gro)
+water_file="tip4p.gro"      # [spc216.gro], tip4p.gro, ..., or explicitly with directory (amber03ws.ff/tip4p2005.gro)
 
 
 : '
