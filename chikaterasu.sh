@@ -3,7 +3,7 @@
 : '
 *************************************************************
 Chikaterasu         version dev
-gmx                 tested for versions 2018, 2019
+gmx                 tested for versions 2018, 2019, 2021.1
                     Parts of the no-protein setup seem not to
                     work with gmx 2019
 
@@ -47,7 +47,7 @@ nruns=1                     # 1 for testing; 10 for production
 
 # == Debug level ==
 
-debug_level=0
+debug_level=0               # Manually set debug level. Or give as argument, e.g.: ./chikaterasu 0
 
 # == Histidine and Zn2+ stuff ==
 
@@ -99,6 +99,13 @@ Setup directories for the run
 node_name=$(hostname)   # for report; to do: make report
 gromacs_version="2018"  # for report; to do: get from gmx output
 
+if [ -z "$1" ]
+then
+      echo "[Chikaterasu] Command line arguments are empty. Using manually set debug level $debug_level."
+else
+      echo "[Chikaterasu] Command line arugments provided. Using first argument as debug level $1."
+      debug_level=$1
+fi
 
 mkdir -p gromacs
 rm -rf gromacs/top
