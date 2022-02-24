@@ -101,10 +101,10 @@ gromacs_version="2018"  # for report; to do: get from gmx output
 
 if [ -z "$1" ]
 then
-      echo "[Chikaterasu] Command line arguments are empty. Using manually set debug level $debug_level."
+    echo "[Chikaterasu] Command line arguments are empty. Using manually set debug level $debug_level."
 else
-      echo "[Chikaterasu] Command line arugments provided. Using first argument as debug level $1."
-      debug_level=$1
+    echo "[Chikaterasu] Command line arugments provided. Using first argument as debug level $1."
+    debug_level=$1
 fi
 
 mkdir -p gromacs
