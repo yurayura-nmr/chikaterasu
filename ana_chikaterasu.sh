@@ -327,6 +327,7 @@ do
       cd hbond
       printf "MainChain+H\nMainChain+H" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn hbond.ndx -num protein_protein.xvg -dt $dt
 
+      # (Note: this requires that plot_hbmap.pl is in the PATH and is executable)
       # Extract hydrogen bonds in form of a nice table from the gmx hbond output using Justin's script
       # Syntax of plot_hbmap.pl requires that the .ndx file
       # contains only the [hbonds...] section (e.g. [ hbonds_MainChain+H ]) and only the atom numbers herein.
