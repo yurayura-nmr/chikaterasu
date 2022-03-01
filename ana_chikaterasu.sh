@@ -104,10 +104,10 @@ Setup directories for the run
 *************************************************************
 '
 
-read -p "[Chikaterasu-dev] Starting analysis."
+read -p "[Chikaterasu-dev] Starting analysis." dummy
 
 if [ "$cleanup" = true ] ; then
-    read -p "[Chikaterasu-dev] Chikaterasu will clean up the results folder to save disk space! Abort if necessary."
+    read -p "[Chikaterasu-dev] Chikaterasu will clean up the results folder to save disk space! Abort if necessary." dummy
     rm -rf results
 fi
 
@@ -148,7 +148,7 @@ do
   *************************************************************
   '
   if [ "$on_the_fly" = true ] ; then
-    read -p "[Chikaterasu-dev] Chikaterasu will try to analyze a currently on-going run! Abort if necessary."
+    read -p "[Chikaterasu-dev] Chikaterasu will try to analyze a currently on-going run! Abort if necessary." dummy
     cp ./runs/md/md.xtc ./results/$proc_folder/
     cp ./runs/md/md.tpr ./results/$proc_folder/
     cd ./results/$proc_folder  
