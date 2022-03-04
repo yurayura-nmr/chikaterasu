@@ -8,8 +8,8 @@ Erik Walinda
 Kyoto University
 Graduate School of Medicine
 
-Last change: 2021-1-17
-Added minimum distance matrix
+Last change: 2022-3-4
+Added dipole (untested)
 
 gmx version         2021
 chikaterasu version dev
@@ -49,6 +49,8 @@ distance=false
 sasa=false
 pca=false
 contactmap=false    # Draw contact map (mean-smallest-distance map)
+dipole=false
+mu=2.273            # Dipole moment of water. spc: 2.273 | tip4p/2005: 2.38
 
 
 hbond_ATP=false     # Custom function for ATP research; have to specify group number "13" instead of name "ATP" bug?
@@ -140,6 +142,7 @@ do
   mkdir -p results/$proc_folder/domain_angle
   mkdir -p results/$proc_folder/paxis
   mkdir -p results/$proc_folder/contact_map
+  mkdir -p results/$proc_folder/dipole
 
   : '
   *************************************************************
@@ -435,6 +438,16 @@ do
       printf "0\n" | gmx distance -f md_fit.xtc -s md_target.tpr -n ./distance/chikaterasu.ndx -oall ./distance/distance.xvg
   fi
 
+  : '
+  *************************************************************
+  Dipole analysis of solvent (untested)
+  *************************************************************
+  : '
+  if [ "$dipole" = true ] ; then
+      #printf "0\n" | gmx distance -f md_fit.xtc -s md_target.tpr -n ./distance/chikaterasu.ndx -oall ./distance/distance.xvg
+      gmx dipoles -P 1 -o ./dipole/dip_test -mu $mu -mumax 5.0 -f md_full.xtc -s md.tpr
+  fi
+  
   : '
   *************************************************************
   Principal component analysis  
