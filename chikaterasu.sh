@@ -302,7 +302,7 @@ if [ "$distance_restraints" = true ] ; then
 
     #exit 1
 
-    read -p "[Chikaterasu-dev] Distance restraints are ON." 
+    read -p "[Chikaterasu-dev] Distance restraints are ON." dummy
 
 fi
 
