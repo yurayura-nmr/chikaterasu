@@ -8,7 +8,7 @@ integrator = md  ; leap-frog integrator
 
 ; Simulation length
 nsteps  = 50000000	; 100 ns
-dt			= 0.002		  ; thus, 2 fs
+dt			= 0.002		  ; thus, 2 fs [note 2022/3/6 0.0025 might work)
 
 ; Output
 nstxout	  = 10000  ; save coordinates every 20.0 ps [can increase this to save disk space]
