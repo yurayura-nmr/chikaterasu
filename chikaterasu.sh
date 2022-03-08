@@ -112,12 +112,12 @@ rm -rf gromacs/top
 rm -rf gromacs/solvation
 rm -rf gromacs/addions
 rm -rf gromacs/emin
-rm -rf gromacs/mdp
+#rm -rf gromacs/mdp   # unused?
 mkdir -p gromacs/top
 mkdir -p gromacs/solvation
 mkdir -p gromacs/addions
 mkdir -p gromacs/emin
-mkdir -p gromacs/mdp
+#mkdir -p gromacs/mdp
 mkdir -p gromacs/coord
 mkdir -p runs
 mkdir -p runs/nvt
@@ -346,7 +346,7 @@ do
         cp ../../chika_mdp/nvt.mdp ./nvt.mdp
 
         gmx grompp -f ./nvt.mdp -c ../../gromacs/emin/em.gro -r ../../gromacs/emin/em.gro -p ../../gromacs/top/topol.top -o nvt.tpr -maxwarn 1
-        gmx mdrun -deffnm nvt -nb gpu
+        gmx mdrun -deffnm nvt -nb gpu -v
 
         if [ "$debug_level" = 5 ] ; then
             echo "[Chikaterasu] Debug level 5 set. Exiting after NVT equilibration."
@@ -361,7 +361,7 @@ do
         cp ../../chika_mdp/npt.mdp ./npt.mdp
 
         gmx grompp -f ./npt.mdp -c ../nvt/nvt.gro -r ../nvt/nvt.gro -t ../nvt/nvt.cpt -p ../../gromacs/top/topol.top -o npt.tpr -maxwarn 1
-        gmx mdrun -deffnm npt -nb gpu
+        gmx mdrun -deffnm npt -nb gpu -v
 
         if [ "$debug_level" = 6 ] ; then
             echo "[Chikaterasu] Debug level 6 set. Exiting after NPT equilibration."
@@ -395,7 +395,7 @@ do
         gmx editconf -f md.tpr -o md.gro
 
         gmx grompp -f ./md.mdp -c ../npt/npt.gro -t ../npt/npt.cpt -p ../../gromacs/top/topol.top -o md.tpr -maxwarn 1
-        gmx mdrun -deffnm md -nb gpu
+        gmx mdrun -deffnm md -nb gpu -v
 
         printf "Temperature" | gmx energy -f md.edr -o ./temperature.xvg
         printf "Density" | gmx energy -f md.edr -o ./density.xvg
