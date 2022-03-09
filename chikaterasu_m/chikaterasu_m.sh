@@ -1,3 +1,36 @@
+#!/bin/sh
+
+: '
+*************************************************************
+Chikaterasu_m       version dev
+gmx                 tested for versions ....
+                    martini 2.2
+                    
+Last change         see github
+
+Erik Walinda
+Kyoto University
+Graduate School of Medicine
+
+*************************************************************
+'
+
+: '
+*************************************************************
+Manually setup parameters for this run
+Most parameters are defined by mdp files
+The starting PDB file should be placed into gromacs/coord
+Debug level 
+0   full production MD run [NPT]; no debug
+1   topology generation [pdb2gmx]
+2   solvation
+3   addition of counterions
+    addition of distance restraints; no debug level implemented yet
+4   energy minimization
+5   NVT done
+6   NPT done
+*************************************************************
+'
 
 box_manual=true
 box_dim="8.000   8.000   8.000"
