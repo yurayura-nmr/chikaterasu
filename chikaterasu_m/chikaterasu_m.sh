@@ -40,8 +40,8 @@ box_manual=true
 box_dim="8.000   8.000   8.000"
 
 # top/itp must be manually prepared and ready in folder
-top="k48" # name
-protein_name="k48-CG"
+top="k48"               # name
+protein_name="k48-CG"   # -CG coarse grained (martinized) pdb
 
 : '
 *************************************************************
@@ -139,7 +139,7 @@ gmx solvate -cp ../emin/minimization-vac.tpr -cs water.gro -radius 0.21 -o syste
 
 # Now we need to count how many waters we added
 cp ../top/$top.top ../top/system_solvated.top
-echo -n "W\t\t" >> ../top/system_solvated.top
+echo -n "\nW\t\t" >> ../top/system_solvated.top
 grep -c W system_solvated.gro >> ../top/system_solvated.top
 
 # Solution minimization
