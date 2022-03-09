@@ -21,6 +21,8 @@ Manually setup parameters for this run
 Most parameters are defined by mdp files
 The starting PDB file should be placed into gromacs/coord
 Debug level 
+
+// to be added
 0   full production MD run [NPT]; no debug
 1   topology generation [pdb2gmx]
 2   solvation
@@ -34,10 +36,21 @@ Debug level
 
 box_manual=true
 box_dim="8.000   8.000   8.000"
-protein_name="k48-CG"
 
-# top/itp must be manually prepared and ready in folder
-top="k48" # name
+: '
+*************************************************************
+Assuming that the topology has already been set up using martinize
+
+Example for K48 diUb
+python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B
+
+Example for monoUb
+python2.7 martinize.py -f 1UBQ.pdb -o single-ubq.top -x 1UBQ-CG.pdb -dssp dssp -p backbone
+
+*************************************************************
+'
+protein_name="1aar_modified" # pdb filename
+top="1aar_modified"          # top filename
 
 # 1. editconf
 
