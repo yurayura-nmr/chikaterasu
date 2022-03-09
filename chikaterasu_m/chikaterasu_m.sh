@@ -162,6 +162,17 @@ Add ions
 
 # IONS NOT IMPLEMENTED YET
 
+# But seems to work mostly the same as normal gromacs
+
+# Pseudocode
+# get ions.mdp from chika_mdp
+# get martini_ions.itp and somehow include it in the topology
+# gmx grompp -f ./ions.mdp -c ../solvation/system_solvated.gro -p ../top/system_solvated.top -o ./ions.tpr    # -maxwarn 1
+# gmx genion -s ./ions.tpr -o solv_ions.gro -p ../top/system_solvated.top -conc 0 -neutral
+# and then continue with the solv ions.
+# check if topology updated with ions
+
+
 if [ "$debug_level" = 3 ] ; then
     echo "[Chikaterasu] Debug level 3 set. Exiting after adding counterions."
     exit 1
