@@ -15,4 +15,4 @@ gmx trjconv -s md_target.tpr -f md_target_centered_no_PBC.xtc -fit rot+trans -o 
 # make_ndx as usual
 gmx distance -f ../dynamic.xtc -s ../dynamic.tpr -oall distance.xvg -n index.ndx -rmpbc -tu us
 # print max. distance
-awk 'NR==2{max = $2 + 0; next} {if ($2 > max) max = $2;} END {print max}' distance.xvg 
+grep -v "@" distance.xvg | awk 'NR==2{max = $2 + 0; next} {if ($2 > max) max = $2;} END {print max}' distance.xvg 
