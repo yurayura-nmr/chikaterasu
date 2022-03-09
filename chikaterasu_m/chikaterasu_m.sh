@@ -79,7 +79,7 @@ mkdir -p custom_analysis
 Assuming that the topology has already been set up using martinize
 
 Example for K48 diUb
-python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B
+python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 0 -ep 0
 
 Example for monoUb
 python2.7 martinize.py -f 1UBQ.pdb -o single-ubq.top -x 1UBQ-CG.pdb -dssp dssp -p backbone
