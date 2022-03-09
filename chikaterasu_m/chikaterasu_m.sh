@@ -206,7 +206,7 @@ cp ../npt/*.itp .
 cp ../npt/equilibration.gro .
 cp ../npt/equilibration.tpr .
 
-# Run. Gromacs should recongize GPU even without specifically telling it to?
+# Run. Gromacs recognizes what to do with the GPU without specifically saying "-nb gpu"
 gmx grompp -p system_solvated.top -f ../../chika_mdp/dynamic.mdp -o dynamic.tpr -c equilibration.tpr -maxwarn 1
 gmx mdrun -deffnm dynamic -v 
 
