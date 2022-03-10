@@ -93,7 +93,9 @@ Additional bonds that might be too stiff (C-terminus!)
   154   163      6   0.76329 RUBBER_FC*0.768516   ; R72-G76
   157   163      6   0.47946 RUBBER_FC*1.020747   ; L73-G76
   
-   77   154      6   0.85887 RUBBER_FC*0.698464 ; keeps R72 artificially in place
+Additional bonds that might be too stiff (constraining C-terminus!)
+   77   154      6   0.85887 RUBBER_FC*0.698464   ; keeps R72 artificially in place
+   ...  154-157 etc.                              ; everything that links R72, L73 to the main core
 
 
 Example for monoUb
