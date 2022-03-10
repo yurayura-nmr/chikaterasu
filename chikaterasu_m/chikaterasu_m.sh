@@ -81,6 +81,14 @@ Assuming that the topology has already been set up using martinize
 Example for K48 diUb
 python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 0 -ep 0
 
+To let bonds decay
+python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 1 -ep 1
+
+To identify cross-bonds between subunits (we want to avoid these)
+awk -v x=163 '($1 <= x) && ($2 >x)' Protein_A+Protein_B.itp > to_replace.txt
+Open in vsCode side by side and comment out respective lines in Pro~Pro.itp
+
+
 Example for monoUb
 python2.7 martinize.py -f 1UBQ.pdb -o single-ubq.top -x 1UBQ-CG.pdb -dssp dssp -p backbone
 
