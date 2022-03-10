@@ -89,13 +89,18 @@ awk -v x=163 '($1 <= x) && ($2 >x)' Protein_A+Protein_B.itp > to_replace.txt
 Open in vsCode side by side and comment out respective lines in Pro~Pro.itp
 
 Additional bonds that might be too stiff (C-terminus!)
+e.g.,
   154   162      6   0.87282 RUBBER_FC*0.688791   ; R72-G75
   154   163      6   0.76329 RUBBER_FC*0.768516   ; R72-G76
   157   163      6   0.47946 RUBBER_FC*1.020747   ; L73-G76
   
-Additional bonds that might be too stiff (constraining C-terminus!)
+To catch all of them ...
+   Distal:
    77   154      6   0.85887 RUBBER_FC*0.698464   ; keeps R72 artificially in place
    ...  154-157 etc.                              ; everything that links R72, L73 to the main core
+   
+   Proximal:
+   ...  317-326                                   ; holds R72 etc artificially close to P37 etc.
 
 
 Example for monoUb
