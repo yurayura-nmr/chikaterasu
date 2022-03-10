@@ -99,8 +99,8 @@ To catch all of them ...
    77   154      6   0.85887 RUBBER_FC*0.698464   ; keeps R72 artificially in place
    ...  154-157 etc.                              ; everything that links R72, L73 to the main core
    
-   Proximal:
-   ...  317-326                                   ; holds R72 etc artificially close to P37 etc.
+   Proximal (everything past 315 (L71):
+   ...  315-326                                   ; holds R72 etc artificially close to P37 etc.
 
 
 Example for monoUb
