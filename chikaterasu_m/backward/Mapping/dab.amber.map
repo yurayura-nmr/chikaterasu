@@ -1,0 +1,37 @@
+; kri /140325
+[ molecule ]
+DAB
+
+[ martini ]
+BB SC1 SC2
+
+[ mapping ]
+amber amber94 amber96 amber99 amber99sb amber03 amberGS
+
+[ atoms ]
+    1     N    BB
+    2     H    BB
+    3    CA    BB
+    4    HA    BB
+    5    CB   SC1 BB 
+    6   HB1   SC1 BB 
+    7   HB2   SC1 BB 
+    8    CG   SC1 
+    9   HG1   SC1 
+   10   HG2   SC1 
+   17    ND   SC2 SC1 
+   18   HD1   SC2
+   19   HD2   SC2
+   20   HD3   SC2
+   21     C    BB
+   22     O    BB
+
+[ chiral ]
+  CB     CA    N    C
+  HB1    CA    N    C
+  HB2    CA    N    C
+
+[ chiral ]
+  HA     CA    N    CB    C ; L-Dab
+; HA     CA    N    C    CB ; D-Dab
+

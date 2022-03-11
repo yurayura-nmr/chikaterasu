@@ -1,0 +1,95 @@
+; 
+[ molecule ]
+GMO
+
+[ martini ]
+ GL1 C1A C2A D3A C4A C5A
+
+[ mapping ]
+amber amber94 amber96 amber99 amber99sb amber03 amberGS
+
+[ atoms ]
+  1	   C1   C5A
+  2	   H2
+  3	   H3
+  4	   H4
+  5	   C5   C5A C5A C4A
+  6	   H6
+  7	   H7
+  8	   C8   C4A C5A
+  9	   H9
+ 10	  H10
+ 11	  C11   C4A C4A C5A
+ 12	  H12
+ 13	  H13
+ 14	  C14   C4A
+ 15	  H15
+ 16	  H16
+ 17	  C17   C4A C4A D3A
+ 18	  H18
+ 19	  H19
+ 20	  C20   D4A D3A
+ 21	  H21
+ 22	  H22
+ 23	  C23   D3A D3A C4A
+ 24	  H24
+ 25	  H25
+;;double bond
+ 26	  C26   D3A
+ 27	  H27
+ 28	  C28
+ 29	  H29
+
+ 30	  C30   C2A D3A D3A D3A
+ 31	  H31
+ 32	  H32
+ 33	  C33   C2A D3A
+ 34	  H34
+ 35	  H35
+ 36	  C36    C2A C2A C2A D3A
+ 37	  H37
+ 38	  H38
+ 39	  C39    C2A
+ 40	  H40
+ 41	  H41
+ 42	  C42   C2A C2A C2A C1A
+ 43	  H43
+ 44	  H44
+ 45	  C45   C2A C1A
+ 46	  H46
+ 47	  H47
+ 48	  C48   C2A C1A C1A C1A
+ 49	  H49
+ 50	  H50
+;;;ester
+ 51	  C51   C1A
+ 52	  O52   
+ 53	  O53   C1A C1A C1A GL1
+;;;glycerol
+ 54	  C54  GL1 C1A
+ 55	  H55
+ 56	  H56
+ 57	  C57  GL1 GL1 GL1 C1A
+ 58	  H58
+ 59	  O59
+ 60	  H60
+ 61	  C61   GL1
+ 62	  H62
+ 63	  H63
+ 64	  O64
+ 65	  H65
+
+; acyl esters
+[trans]
+C48 C51 O53 C54
+[ out ]
+O52 C51 O53 C48
+
+;cis bonds in lipid chains
+[ out ]
+H27 C26 C23 C30 
+[ trans ]
+H29  C28  C26 C23
+[ out ]
+C30  C28  C26 H29 
+
