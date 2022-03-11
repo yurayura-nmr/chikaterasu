@@ -12,3 +12,4 @@ Adjusted initram.sh for non-ancient gromacs versions since initram writes its ow
 
 ./initram.sh -f CG_posre.gro -o aa_charmm.gro -to charmm36 -p gromacs/top/topol.top
 
+And visualize the output as usual (aa_charmm.gro).
