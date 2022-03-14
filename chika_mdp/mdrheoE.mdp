@@ -1,5 +1,5 @@
 ; md.mdp 
-; Rheo-MD (Shear flow) version.
+; Rheo-MD (Shear flow) or electric field option-containing version.
 ; For amber99sb-ildn forcefield
 ; Lindorff‐Larsen, Kresten, et al. "Improved side‐chain torsion potentials for the Amber ff99SB protein force field."
 ; Proteins: Structure, Function, and Bioinformatics 78.8 (2010): 1950-1958.
@@ -68,3 +68,7 @@ gen_vel			= no  ; Velocity generation is off since we are restarting after NPT
 ; Flow
 ; velocity [nm/ps]
 deform          = 0 0 0 0 0 0.01
+
+; Electric field
+; Magnitude [V/nm]
+;electric-field-x = 0.01 0 0 0
