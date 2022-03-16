@@ -5,6 +5,7 @@
 Chikaterasu_m       version dev
 gmx                 tested for gmx version 2019.2
 martini             tested for ff  version 2.2
+                    Older bash shells (2013) complain and cause errors.
                     
 Last change         see github
 
@@ -15,6 +16,40 @@ Graduate School of Medicine
 *************************************************************
 '
 
+: '
+*************************************************************
+Assuming that the topology has already been set up using martinize
+
+Example for K48 diUb
+python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 0 -ep 0
+
+To let bonds decay
+python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 1 -ep 1
+
+To identify cross-bonds between subunits (we want to avoid these)
+awk -v x=163 '($1 <= x) && ($2 >x)' Protein_A+Protein_B.itp > to_replace.txt
+Open in vsCode side by side and comment out respective lines in Pro~Pro.itp
+
+Additional bonds that might be too stiff (C-terminus!)
+e.g.,
+  154   162      6   0.87282 RUBBER_FC*0.688791   ; R72-G75
+  154   163      6   0.76329 RUBBER_FC*0.768516   ; R72-G76
+  157   163      6   0.47946 RUBBER_FC*1.020747   ; L73-G76
+  
+To catch all of them ...
+   Distal:
+   77   154      6   0.85887 RUBBER_FC*0.698464   ; keeps R72 artificially in place
+   ...  154-157 etc.                              ; everything that links R72, L73 to the main core
+   
+   Proximal (everything past 315 (L71):
+   ...  315-326                                   ; holds R72 etc artificially close to P37 etc.
+
+
+Example for monoUb
+python2.7 martinize.py -f 1UBQ.pdb -o single-ubq.top -x 1UBQ-CG.pdb -dssp dssp -p backbone
+
+*************************************************************
+'
 : '
 *************************************************************
 Manually setup parameters for this run
@@ -74,40 +109,7 @@ mkdir -p runs/npt
 mkdir -p runs/md
 mkdir -p custom_analysis
 
-: '
-*************************************************************
-Assuming that the topology has already been set up using martinize
 
-Example for K48 diUb
-python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 0 -ep 0
-
-To let bonds decay
-python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 1 -ep 1
-
-To identify cross-bonds between subunits (we want to avoid these)
-awk -v x=163 '($1 <= x) && ($2 >x)' Protein_A+Protein_B.itp > to_replace.txt
-Open in vsCode side by side and comment out respective lines in Pro~Pro.itp
-
-Additional bonds that might be too stiff (C-terminus!)
-e.g.,
-  154   162      6   0.87282 RUBBER_FC*0.688791   ; R72-G75
-  154   163      6   0.76329 RUBBER_FC*0.768516   ; R72-G76
-  157   163      6   0.47946 RUBBER_FC*1.020747   ; L73-G76
-  
-To catch all of them ...
-   Distal:
-   77   154      6   0.85887 RUBBER_FC*0.698464   ; keeps R72 artificially in place
-   ...  154-157 etc.                              ; everything that links R72, L73 to the main core
-   
-   Proximal (everything past 315 (L71):
-   ...  315-326                                   ; holds R72 etc artificially close to P37 etc.
-
-
-Example for monoUb
-python2.7 martinize.py -f 1UBQ.pdb -o single-ubq.top -x 1UBQ-CG.pdb -dssp dssp -p backbone
-
-*************************************************************
-'
 
 : '
 *************************************************************
