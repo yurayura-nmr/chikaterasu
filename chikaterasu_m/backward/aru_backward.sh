@@ -22,6 +22,7 @@ vi ..
 cd ..
 cd ..
 ./chikaterasu.sh 1
+cp gromacs/top/topol.top chikaterasu_m/backward/
 
 # 4. Run "chikaterasu 5" to obtain the file posre.itp (used by BACKWARD).
 
