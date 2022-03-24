@@ -29,10 +29,7 @@ cp gromacs/top/topol.top chikaterasu_m/backward/
 ./chikaterasu.sh 5
 cp gromacs/top/posre.itp chikaterasu_m/backward/
 
-# 5. Run "chikaterasu 1" again to obtain topology file without any new stuff (introduced by chikaterasu 5).
-cp topolo.top chikaterasu_m/backward/
-
-#/ 6. Try to run initram:
+# 5. Try to run initram:
 
 # needs py27
 # conda create --name py27 python=2.7
