@@ -19,12 +19,22 @@ Graduate School of Medicine
 : '
 *************************************************************
 Assuming that the topology has already been set up using martinize
+http://www.cgmartini.nl/index.php/tutorials/37-tutorial2/311-tutorial-proteins#soluble-martini
 
 Example for K48 diUb
 python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 0 -ep 0
 
 To let bonds decay
 python2.7 martinize.py -f 1aar_modified.pdb -o 1aar_modified.top -x 1aar_modified-CG.pdb -dssp dssp -p backbone -merge A,B -elastic -ef 500 -el 0.5 -eu 0.9 -ea 1 -ep 1
+
+As an example, the difference between these two lines is:
+
+-ea 0 -ep 0 
+    1    32      6   0.62818 RUBBER_FC*1.000000
+
+-ea 1 -ep 1
+    1    32      6   0.62818 RUBBER_FC*0.879693
+
 
 To identify cross-bonds between subunits (we want to avoid these)
 awk -v x=163 '($1 <= x) && ($2 >x)' Protein_A+Protein_B.itp > to_replace.txt
