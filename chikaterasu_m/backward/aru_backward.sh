@@ -3,6 +3,16 @@ Erik Walinda
 2022/3/11
 
 Adjusted initram.sh for non-ancient gromacs versions since initram writes its own mdp files.
+
+Backward environment currently only set up in Mayuta (misleading path):
+/home/arurun/data/md/20220324_backward/for_sorada/extended_cyclic_18A/chikaterasu-main/chikaterasu_m/backward
+
+Required input files:
+
+* ~~~_to_backcalc.pdb   # the CG structure to be backcalculated
+* ~~~.tpr               # additional parameters [seems to be the same for cyclic/non-cyclic]
+* atomistic pdb (to be converted to topology by chikaterasu)
+
 """
 
 
