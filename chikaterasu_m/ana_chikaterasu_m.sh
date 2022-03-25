@@ -1,14 +1,21 @@
+"""
+Define sample name (easier to keep track of on-the-fly processed filenames)
+"""
+sample="cyclic_ea0_eb0"
+valhost=$(hostname)"_"$sample"_on_the_fly_check_traj.pdb"
+
 # very preliminary
 
 # ---- Visualization
 # to see motion. Center on protein and prevent jumping (for k48)
 gmx editconf -f ../dynamic.tpr -o target.pdb
 printf "non-Water\nq\n" | gmx make_ndx -f target.pdb -o target.ndx
+
 printf "Protein\nProtein\n" | gmx convert-tpr -s ../dynamic.tpr  -n target.ndx -o md_target.tpr
-#printf "Protein\nq\n" | gmx convert-tpr -s ../dynamic.tpr  -n target.ndx -o md_target.tpr
 printf "Protein\nProtein\n" | gmx trjconv -s ../dynamic.tpr -f ../dynamic.xtc -center -ur compact -pbc nojump -o md_target_centered_no_PBC.xtc
-printf "Protein\nProtein\n" |gmx trjconv -s md_target.tpr -f md_target_centered_no_PBC.xtc -fit rot+trans -o md_fit.xtc
-printf "Protein\nProtein\n" |gmx trjconv -s md_target.tpr -f md_target_centered_no_PBC.xtc -fit rot+trans -o test.pdb -conect -dt 2500
+printf "Protein\nProtein\n" | gmx trjconv -s md_target.tpr -f md_target_centered_no_PBC.xtc -fit rot+trans -o md_fit.xtc
+
+printf "Protein\nProtein\n" | gmx trjconv -s md_target.tpr -f md_target_centered_no_PBC.xtc -fit rot+trans -o $valhost -conect -dt 2500
 # ----
 
 # on the fly check distance
