@@ -13,6 +13,22 @@ Required input files:
 * ~~~.tpr               # additional parameters [seems to be the same for cyclic/non-cyclic]
 * atomistic pdb (to be converted to topology by chikaterasu)
 
+MDP scripts might still be optimized for GROMACS 2021. They seem old. I.e., I get these warnings:
+
+NOTE 1 [file unknown]:
+  You are using constraints on all bonds, whereas the forcefield has been
+  parametrized only with constraints involving hydrogen atoms. We suggest
+  using constraints = h-bonds instead, this will also improve performance.
+
+NOTE 2 [file 4-mdpr-0.0005.mdp]:
+  Removing center of mass motion in the presence of position restraints
+  might cause artifacts. When you are using position restraints to
+  equilibrate a macro-molecule, the artifacts are usually negligible.
+
+NOTE 3 [file 4-mdpr-0.0005.mdp]:
+  You are using a plain Coulomb cut-off, which might produce artifacts.
+  You might want to consider using PME electrostatics.
+
 """
 
 
