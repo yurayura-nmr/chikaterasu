@@ -92,9 +92,11 @@ NP=0
 KICK=0.05
 KEEP=false
 TRJ=false
-EMSTEPS=500
-NBSTEPS=500
-MDSTEPS=500
+
+EMSTEPS=5000   # Erik Walinda. Better results.
+NBSTEPS=5000   # Erik Walinda. Better results.
+MDSTEPS=500000 # Erik Walinda. Better results.
+
 DT=0.0002,0.0005,0.001,0.002
 MDP=()
 POSRE=true
