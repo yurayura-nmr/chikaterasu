@@ -61,12 +61,12 @@ pbc                      = xyz
 verlet-buffer-tolerance  = 0.005
 
 coulombtype              = reaction-field 
-rcoulomb                 = 1.1
+rcoulomb                 = 1.4
 epsilon_r                = 15	; 2.5 (with polarizable water)
 epsilon_rf               = 0
 vdw_type                 = cutoff  
 vdw-modifier             = Potential-shift-verlet
-rvdw                     = 1.1
+rvdw                     = 1.4
 
 ; MARTINI and TEMPERATURE/PRESSURE
 ; normal temperature and pressure coupling schemes can be used. 
@@ -87,10 +87,11 @@ rvdw                     = 1.1
 ; Rahman is prone to oscillating behaviour. For bilayer systems the pressure 
 ; coupling should be done semiisotropic.
 
-tcoupl                   = v-rescale 
-tc-grps                  = system 
-tau_t                    = 1.0   
-ref_t                    = 300 
+tcoupl                  = V-rescale             ; improved Berendsen thermostat
+tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate
+tau_t                   = 2.0     2.0           ; time constant, in ps
+ref_t                   = 310     310           ; reference temperature, one for each group, in K
+
 Pcoupl                   = parrinello-rahman 
 Pcoupltype               = isotropic
 tau_p                    = 12.0 ; 12.0  ;parrinello-rahman is more stable with larger tau-p, DdJ, 20130422
