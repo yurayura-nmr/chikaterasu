@@ -2,7 +2,9 @@
 Define sample name (easier to keep track of on-the-fly processed filenames)
 """
 sample="cyclic_ea0_eb0"
+
 valhost=$(hostname)"_"$sample"_on_the_fly_check_traj.pdb"
+valdist=$(hostname)"_"$sample"_distance.xvg"
 
 # very preliminary
 
@@ -21,9 +23,10 @@ printf "Protein\nProtein\n" | gmx trjconv -s md_target.tpr -f md_target_centered
 # on the fly check distance
 
 # make_ndx as usual
-gmx distance -f ../dynamic.xtc -s ../dynamic.tpr -oall distance.xvg -n index.ndx -rmpbc -tu ns
+gmx distance -f ../dynamic.xtc -s ../dynamic.tpr $valdist -n index.ndx -rmpbc -tu ns
+
 # print max. distance
-awk 'NR==2{max = $2 + 0; next} {if ($2 > max) max = $2;} END {print max}' distance.xvg 
+awk 'NR==2{max = $2 + 0; next} {if ($2 > max) max = $2;} END {print max}' $valdist
 
 #or just
 tail -n 30 distance.xvg
