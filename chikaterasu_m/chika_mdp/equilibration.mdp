@@ -87,10 +87,11 @@ rvdw                     = 1.1
 ; Rahman is prone to oscillating behaviour. For bilayer systems the pressure 
 ; coupling should be done semiisotropic.
 
-tcoupl                   = berendsen ; v-rescale 
-tc-grps                  = system 
-tau_t                    = 2.0   
-ref_t                    = 300 
+tcoupl                  = V-rescale             ; improved Berendsen thermostat
+tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate
+tau_t                   = 2.0     1.0           ; time constant, in ps
+ref_t                   = 310     310           ; reference temperature, one for each group, in K
+
 Pcoupl                   = berendsen ; parrinello-rahman 
 Pcoupltype               = isotropic
 tau_p                    = 12.0 ; 12.0  ;parrinello-rahman is more stable with larger tau-p, DdJ, 20130422
@@ -98,7 +99,7 @@ compressibility          = 3e-4 ;  3e-4
 ref_p                    = 1.0  ; 1.0
 
 gen_vel                  = yes
-gen_temp                 = 300
+gen_temp                 = 310
 gen_seed                 = 473529
 
 ; MARTINI and CONSTRAINTS 
