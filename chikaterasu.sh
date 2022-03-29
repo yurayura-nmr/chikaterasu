@@ -13,7 +13,8 @@ Erik Walinda
 Kyoto University
 Graduate School of Medicine
 
-To do               Did not yet test modification of mv at the end (data storage)
+To do               ss untested and only implemented for His=false yet
+                    Did not yet test modification of mv at the end (data storage)
                     Sometimes did not store folders correctly. i.e., md_1 inside md etc.
                     
                     re-add dssp function: 
@@ -53,6 +54,7 @@ debug_level=0               # Manually set debug level. Or give as argument, e.g
 
 his_manual=false            # manually specify histidine protonation state
 distance_restraints=false   # for Zn2+
+disulfide=false             # do we want to account for disulfide bridges when making the topology?
 
 # === Ions ===
 
@@ -143,7 +145,12 @@ if [ "$insert_small_molecules" = false ] ; then
     fi
 
     if [ "$his_manual" = false ] ; then
-        gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
+        if [ "$disulfide" = false ] ; then
+            gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
+        fi
+        if [ "$disulfide" = true ] ; then
+          gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive -ss
+        fi
     fi
 fi
 
