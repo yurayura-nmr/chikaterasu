@@ -99,7 +99,7 @@ Setup directories for the run
 '
 
 node_name=$(hostname)   # for report; to do: make report
-gromacs_version="2018"  # for report; to do: get from gmx output
+gromacs_version="2021"  # for report; to do: get from gmx output
 
 if [ -z "$1" ]
 then
