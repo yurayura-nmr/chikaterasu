@@ -23,7 +23,7 @@ printf "Protein\nProtein\n" | gmx trjconv -s md_target.tpr -f md_target_centered
 # on the fly check distance
 
 # make_ndx as usual
-gmx distance -f ../dynamic.xtc -s ../dynamic.tpr $valdist -n index.ndx -rmpbc -tu ns
+gmx distance -f ../dynamic.xtc -s ../dynamic.tpr -oall $valdist -n index.ndx -rmpbc -tu ns
 
 # print max. distance
 awk 'NR==2{max = $2 + 0; next} {if ($2 > max) max = $2;} END {print max}' $valdist
