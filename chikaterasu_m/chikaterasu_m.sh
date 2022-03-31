@@ -22,13 +22,18 @@ Most parameters are defined by mdp files
 The starting PDB file should be placed into gromacs/coord
 Debug level 
 
-// to be added
 0   full production MD run [NPT]; no debug
 1   topology generation [pdb2gmx]
 2   solvation
 3   addition of counterions
     addition of distance restraints; no debug level implemented yet
 4   equilibration
+
+Requires:
+* top and itp in working folder: e.g.,
+* k48.top | Protein_A+Protein_B.itp
+* martini.itp if adjusted is in chika_mdp folder
+
 *************************************************************
 '
 
@@ -73,12 +78,11 @@ rm -rf gromacs/top
 rm -rf gromacs/solvation
 rm -rf gromacs/addions
 rm -rf gromacs/emin
-#rm -rf gromacs/mdp   # unused?
+
 mkdir -p gromacs/top
 mkdir -p gromacs/solvation
 mkdir -p gromacs/addions
 mkdir -p gromacs/emin
-#mkdir -p gromacs/mdp
 mkdir -p gromacs/coord
 mkdir -p runs
 mkdir -p runs/nvt
