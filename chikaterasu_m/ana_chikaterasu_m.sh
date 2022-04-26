@@ -244,7 +244,7 @@ do
       echo "[ Chikaterasu Distance $atom1 to Residue $atom2 ]" > ./distance/chikaterasu.ndx
       echo "$atom1 $atom2" >> ./distance/chikaterasu.ndx
 
-      printf "0\n" | gmx distance -f ./md_fit.xtc -s ./md_target.tpr -n ./distance/chikaterasu.ndx -oall ./distance/distance.xvg -tu ns
+      printf "0\n" | gmx distance -f ./md_fit.xtc -s ./md_target.tpr -n ./distance/chikaterasu.ndx -oall ./distance/distance.xvg -tu ns -dt $dt
   fi
 
   : '
