@@ -353,10 +353,6 @@ do
         cp ../../chika_mdp/nvt.mdp ./nvt.mdp
 
         gmx grompp -f ./nvt.mdp -c ../../gromacs/emin/em.gro -r ../../gromacs/emin/em.gro -p ../../gromacs/top/topol.top -o nvt.tpr -maxwarn 1
-        
-        # Note (added 20220509): when using mdrun deform option for rheo. MD, a bug seems to exist somehow.
-        # Thread-MPI optimization somehow does not work; however, if the next line is changed to ... it works! (no optimization though?)
-        # gmx mdrun -deffnm md -ntmpi 1 -v
         gmx mdrun -deffnm nvt -nb gpu -v
 
         if [ "$debug_level" = 5 ] ; then
@@ -406,6 +402,10 @@ do
         gmx editconf -f md.tpr -o md.gro
 
         gmx grompp -f ./md.mdp -c ../npt/npt.gro -t ../npt/npt.cpt -p ../../gromacs/top/topol.top -o md.tpr -maxwarn 1
+        
+        # Note (added 20220509): when using mdrun deform option for rheo. MD, a bug seems to exist somehow.
+        # Thread-MPI optimization somehow does not work; however, if the next line is changed to ... it works! (no optimization though?)
+        # gmx mdrun -deffnm md -ntmpi 1 -v
         gmx mdrun -deffnm md -nb gpu -v
 
         printf "Temperature" | gmx energy -f md.edr -o ./temperature.xvg
