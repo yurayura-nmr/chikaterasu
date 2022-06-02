@@ -300,7 +300,7 @@ do
   *************************************************************
   '
   if [ "$traj" = true ] ; then
-      printf "System" | gmx trjconv -f md_fit.xtc -s md_target.tpr -o ./traj/traj.pdb -dt $dt
+      printf "System" | gmx trjconv -f md_fit.xtc -s md_target.tpr -o ./traj/traj.pdb -dt $dt # -pbc mol -pbc nojump
   fi
 
   : '
