@@ -62,9 +62,20 @@ signedPaxis=false   # may not correctly work with 3DNA for now ... (does not alw
 
 dssp=false
 
-# == Dimers, hexamers or multiple chains? ==
-indexFileProvided=false     # Are you providing a file with the atom numbers for analysis? [chika.idx]
-                            # (if yes: provide a chika.ndx file in main folder). This specifies what atom groups to analyze
+
+: '
+*************************************************************
+Extra analysis options for dimers, multimers, or multiple chains?
+
+If multiple similar domains, it might be difficult to get a consistent RMSD etc., 
+since for each timestep the fitting to the initial frame structure will be different.
+
+indexFileProvided: 
+Are you providing a file with the atom numbers for analysis? [chika.ndx]
+(if yes: provide a chika.ndx file in main folder). This specifies what atom groups to analyze
+*************************************************************
+'
+indexFileProvided=false     
 nchains=3                   # number of chains in the chika.ndx file 
 
 
