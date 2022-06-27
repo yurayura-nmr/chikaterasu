@@ -57,13 +57,14 @@ mu=2.273            # Dipole moment of water. spc: 2.273 | tip4p/2005: 2.38
 hbond_ATP=false     # Custom function for ATP research; have to specify group number "13" instead of name "ATP" bug?
 domain_angle=false  # Custom function for diUb research
 
-paxis=false
+paxis=false         # 
 signedPaxis=false   # may not correctly work with 3DNA for now ... (does not always find Helix axis?)
 
 dssp=false
 
 # == Dimers, hexamers or multiple chains? ==
-indexFileProvided=false     # give a chika.ndx file in main folder to specify what to analyze
+indexFileProvided=false     # Are you providing a file with the atom numbers for analysis? [chika.idx]
+                            # (if yes: provide a chika.ndx file in main folder). This specifies what atom groups to analyze
 nchains=3                   # number of chains in the chika.ndx file 
 
 
