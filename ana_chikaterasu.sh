@@ -413,6 +413,12 @@ do
   : '
   *************************************************************
   Principal axes of inertia
+  
+  Principal axis can be plotted with the script: 
+  md_plot_paxis_tip_overtime.py
+  
+  or MD analysis (python).
+  If using GROMACS, need to remove header and time column.
   *************************************************************
   '
   if [ "$paxis" = true ] ; then
