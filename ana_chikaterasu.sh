@@ -14,6 +14,10 @@ to add: gmx cluster -f md_protein.xtc -s md_protein.tpr -method gromos -cl clust
 
 gmx version         2021
 chikaterasu version dev
+
+Notes to self:
+
+* signed principal axis may not correctly work with 3DNA for now ... (does not always find Helix axis?)
 *************************************************************
 '
 
@@ -57,8 +61,8 @@ mu=2.273            # Dipole moment of water. spc: 2.273 | tip4p/2005: 2.38
 hbond_ATP=false     # Custom function for ATP research; have to specify group number "13" instead of name "ATP" bug?
 domain_angle=false  # Custom function for diUb research
 
-paxis=false         # 
-signedPaxis=false   # may not correctly work with 3DNA for now ... (does not always find Helix axis?)
+paxis=false         # Use gromacs to calculate principal axis. This can flip the axis since vector is unsigned.
+signedPaxis=false   # Do we want to get the signed vector of the principal axis? Requires helper script [chika_paxis.py] 
 
 dssp=false
 
