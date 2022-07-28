@@ -18,6 +18,9 @@ Required input files:
    dt=5000
    runs=1
    distance=true
+   
+2. Extract frame of interest (as identified by Pymol or distance analysis)
+   gmx trjconv -f ./md=fit.xtc -s ./md_target.tpr -b 3180 -e 3180 -tu ns -o 0p55_nm_cyclic.pdb
 
 2. Run the commands outlined below step by step.
 
