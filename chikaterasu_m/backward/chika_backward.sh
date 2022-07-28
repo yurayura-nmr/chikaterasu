@@ -1,12 +1,15 @@
 """
 Erik Walinda
-2022/7/28
+Kyoto University
+Graduate School of Medicine
+
+Last change: 2022/7/28
 
 Required input files:
 
 * ~~~_to_backcalc.pdb   # the CG structure to be backcalculated [frame of interest out of trajectory]
 * ~~~.tpr               # additional parameters [seems to be the same for cyclic/non-cyclic]
-* atomistic pdb (to be converted to topology by chikaterasu)
+* ~~~_atomistic.pdb     # (to be converted to topology by chikaterasu)
 
 
 1. Run ana_chikaterasu_m.sh first to obtain frames of the trajectory with PBC removed.
@@ -16,7 +19,7 @@ Required input files:
    runs=1
    distance=true
 
-2. Run this script
+2. Run the commands outlined below step by step.
 
 Adjusted initram.sh for non-ancient gromacs versions since initram writes its own mdp files.
 
