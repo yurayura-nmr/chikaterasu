@@ -193,11 +193,14 @@ do
   This may be tricky for DNA and protein-prtotein complexes.
   See old version of nicoterasu for details.
   For now, only simple protein behaviour is implemented.
+  
+  dt untested
   *************************************************************
   '
 
   # Remove PBC
-  printf "1\n1\n" | gmx trjconv -s ./dynamic.tpr -f ./dynamic.xtc -center -ur compact -pbc nojump -o ./md_target_centered_no_PBC.xtc
+  printf "1\n1\n" | gmx trjconv -s ./dynamic.tpr -f ./dynamic.xtc -center -ur compact -pbc nojump -dt $dt -o ./md_target_centered_no_PBC.xtc
+  #printf "1\n1\n" | gmx trjconv -s ./dynamic.tpr -f ./dynamic.xtc -center -ur compact -pbc nojump -o ./md_target_centered_no_PBC.xtc
 
 
   : '
