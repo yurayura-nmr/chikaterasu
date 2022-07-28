@@ -48,14 +48,12 @@ NOTE 3 [file 4-mdpr-0.0005.mdp]:
 
 """
 
-
-# 1. Create gro file of CG model using trjconv (take care of PBC).
-
+# 1. Create gro file of CG model using trjconv.
+#              ____________ CG structure ____________                   
 gmx trjconv -f cyclic_extended_frame1_to_backcalc.pdb -s dynamic.tpr -o cyclic_extended_frame1_to_backcalc-CG.gro 
 
 # 2. In atomistic PDB convert GLQ back to GLY and LYQ back to LYS.
-
-vi ..
+vi ... # e.g. k48_closed_atomistic.pdb
 :%s/LYQ/LYS/g
 :%s/GLQ/GLY/g
 
