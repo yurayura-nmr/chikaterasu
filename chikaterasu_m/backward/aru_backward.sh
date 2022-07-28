@@ -2,6 +2,8 @@
 Erik Walinda
 2022/3/11
 
+(run ana_chika first to obtain the frames of the trajectory with PBC removed)
+
 Adjusted initram.sh for non-ancient gromacs versions since initram writes its own mdp files.
 
 Backward environment currently only set up in Mayuta (misleading path):
