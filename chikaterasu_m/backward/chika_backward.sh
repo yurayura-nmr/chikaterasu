@@ -24,6 +24,8 @@ Required input files:
 
 2. Run the commands outlined below step by step.
 
+3. At initram.sh calculation will start. GROMACS will use the GPU if possible. But driver restart might be necessary.
+
 Adjusted initram.sh for non-ancient gromacs versions since initram writes its own mdp files.
 
 Backward environment currently only set up in Mayuta (misleading path):
