@@ -1,0 +1,4 @@
+; to topol.top
+
+[ bonds ]
+  203  1002     6 0.207 4000     ; 16 CYS-SG G-C-T
