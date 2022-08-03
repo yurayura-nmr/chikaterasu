@@ -1,0 +1,8 @@
+#ifdef DISRES
+[ distance_restraints ]
+; ai aj type index type’ low up1 up2 fac
+  2526 3320   1   26     1     0.0 0.23 0.3 1
+  2558 3320   1   26     1     0.0 0.23 0.3 1
+  2730 3320   1   26     1     0.0 0.23 0.3 1
+  2773 3320   1   26     1     0.0 0.23 0.3 1
+#endif
