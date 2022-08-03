@@ -1,4 +1,11 @@
 ; to topol.top
+; chikaterasu will pause and write [Distance restraints are ON]
+; in that moment, can edit topol.top to add these under bonds
+
 
 [ bonds ]
-  203  1002     6 0.207 4000     ; 16 CYS-SG G-C-T
+  203  1002     6 0.24  4000    ; 16 CYS-SG G-C-T
+  171  1002     6 0.24  4000    ; 13 CYS-SG Q-C-P
+  376  1002     6 0.24  4000    ; 27 CYS-SG G-C-E
+  419  1002     6 0.24  4000    ; 30 CYS-SG G-C-C
+
