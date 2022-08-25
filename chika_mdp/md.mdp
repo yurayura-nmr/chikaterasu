@@ -6,6 +6,8 @@
 
 integrator = md  ; leap-frog integrator
 
+;  [If adding distance restraints for ZN etc, don't forget to update this section]
+
 ; Simulation length
 nsteps  = 50000000	; 100 ns
 dt			= 0.002		  ; thus, 2 fs [note 2022/3/6 0.0025 might work)
