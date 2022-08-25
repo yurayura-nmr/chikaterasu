@@ -1,7 +1,7 @@
 ; == Equilibration of the System (Protein + Solvent) ==
 ; NVT
 
-define		= -DPOSRES    		; position restrain the protein
+define		= -DPOSRES    		; position restrain the protein [If adding distance restraints for ZN etc, don't forget to update this section]
 
 ; == Run parameters ==
 
