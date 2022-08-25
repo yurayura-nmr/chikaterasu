@@ -298,6 +298,13 @@ if [ "$distance_restraints" = true ] ; then
     cd gromacs/top
     cp ../../distance_restraints.itp ./
 
+    # untested addition
+    if [[ ! -f ./distance_restraints.itp ]] ; then
+      echo "[Chikaterasu-dev] File distance_restraints.itp is not there, aborting."
+      exit 1
+    fi
+
+    # Add the include statement to the toplogy file [topol.top]
     #; Include distance restraints
     #ifdef DISRES
     #include "./distance_restraints.itp"
@@ -309,7 +316,8 @@ if [ "$distance_restraints" = true ] ; then
 
     #exit 1
 
-    read -p "[Chikaterasu-dev] Distance restraints are ON." dummy
+    echo "[Chikaterasu-dev] Added distance restraints to topology file. If using Zn2+ ion, manually edit the topol.top now to add protein-Zn2+ bonds in the [bonds] section."
+    read -p "[Chikaterasu-dev] Distance restraints are ON. Continue?" dummy
 
 fi
 
