@@ -345,7 +345,7 @@ do
   '
   if [ "$hbond" = true ] ; then
       cd hbond
-      printf "MainChain+H\nMainChain+H" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn hbond.ndx -num protein_protein.xvg -dt $dt
+      printf "MainChain+H\nMainChain+H" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn hbond.ndx -num backbone_backbone.xvg -dt $dt
 
       # (Note: this requires that plot_hbmap.pl is in the PATH and is executable)
       # Extract hydrogen bonds in form of a nice table from the gmx hbond output using Justin's script
@@ -355,7 +355,7 @@ do
       awk '/hbond/{y=1;next}y' hbond.ndx > analyze.ndx
       plot_hbmap.pl -s ../target.pdb -map hbmap.xpm -index analyze.ndx
       
-      printf "Protein\nProtein" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn -num backbone_backbone.xvg -dt $dt
+      printf "Protein\nProtein" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn -num protein_protein.xvg -dt $dt
 
       #printf "Protein\nWater" | gmx hbond -f md_full.xtc -s md.tpr -num hbond/protein_water.xvg
       if [ "$hbond_ATP" = true ] ; then
