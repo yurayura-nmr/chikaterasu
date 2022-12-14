@@ -8,7 +8,7 @@ Erik Walinda
 Kyoto University
 Graduate School of Medicine
 
-Last change: 2022-3-4
+Last change: 2022-12-14
 Added dipole (untested)
 to add: gmx cluster -f md_protein.xtc -s md_protein.tpr -method gromos -cl cluster.pdb -g cluster.log -cutoff 0.2
 
