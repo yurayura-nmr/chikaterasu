@@ -22,8 +22,11 @@ Usage
 9. sh chikaterasu.sh 6 -> Test if all equilibration steps including 100 ps NPT are working without any issues.
 10. sh chikaterasu.sh 0 -> Start production MD
 
-2021-10-24
+Change log
 ----------
+
+2021-10-24
+""""""""""
 
 Added just another folder for user-specific (non-automatable specific) analysis.
 (not overwritten by the cleanup function)
