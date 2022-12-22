@@ -3,7 +3,7 @@
 : '
 *************************************************************
 Chikaterasu         version dev
-gmx                 tested for versions 2018, 2019, 2021.1
+gmx                 tested for versions 2018, 2019, 2021.1, 2022.3
                     Parts of the no-protein setup seem not to
                     work with gmx 2019
 
@@ -13,13 +13,6 @@ Erik Walinda
 Kyoto University
 Graduate School of Medicine
 
-To do               ss untested and only implemented for His=false yet
-                    Did not yet test modification of mv at the end (data storage)
-                    Sometimes did not store folders correctly. i.e., md_1 inside md etc.
-                    
-                    re-add dssp function: 
-                    gmx xpm2ps -f ss.xpm -di dssp.m2p
-                    Set debug level from argline
 *************************************************************
 '
 
