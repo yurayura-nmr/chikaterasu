@@ -24,3 +24,9 @@ Before that: (February)
 Added Mg ion functionality  [tested a bit, but may still have bugs]
 
 Added insert molecules      [tested a bit, but may still have bugs]
+
+
+To do
+-----
+
+* [chikaterasu.sh] Issue warning if low on disk space before starting a new run.
