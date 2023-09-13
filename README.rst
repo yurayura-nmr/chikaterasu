@@ -21,8 +21,7 @@ Usage
 1. Put PDB file of your system to be simulated into ./gromacs/coord/          [e.g. 1UBQ.pdb]
 2. Edit the top section of chikaterasu.sh to specify its filename             [e.g. 1UBQ]
 3. Set MD parameters for NVT, NPT, and production MD in chika_mdp/~.mdp files [time, temperature, amounts of frames saved, etc.]
-4. Run chikaterasu at level 1: 
-
+4. Run chikaterasu at level 1::
   sh chikaterasu.sh 1 
   # Tests if pdb format to gromacs conversion works. Make sure no errors or warnings are given by GROMACS.
 
