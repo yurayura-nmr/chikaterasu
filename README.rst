@@ -8,6 +8,13 @@ Chikaterasu
 Bash script to automate setup of multiple identical MD simulations.
 MD parameters are for the amber-type forcefields such as amber99sb-ildn and amber03ws.
 
+Requirements
+------------
+
+GROMACS is used. Any recent version should work. 
+To install GROMACS, download it, extract it, and build from source with GPU support.
+Check gmx --version to see if everything works (GPU/cuda properly recognized? etc.).
+
 Usage
 -----
 
