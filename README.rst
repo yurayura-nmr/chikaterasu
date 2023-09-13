@@ -15,7 +15,7 @@ Usage
 2. Edit the top section of chikaterasu.sh to specify its filename             [e.g. 1UBQ]
 3. Set MD parameters for NVT, NPT, and production MD in chika_mdp/~.mdp files [time, temperature, amounts of frames saved, etc.]
 4. sh chikaterasu.sh 1 -> test if pdb format to gromacs conversion works. Make sure no errors or warnings are given by GROMACS.
-5. sh chikaterasu.sh 2 ->
+5. sh chikaterasu.sh 2 -> test if protein could be solvated in the box. Make sure no errors before continuing.
 6. sh chikaterasu.sh 3 ->
 7. sh chikaterasu.sh 4 ->
 8. sh chikaterasu.sh 5 -> Test if the first equilibration step (100 ps NVT) is working without any issues.
