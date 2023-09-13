@@ -129,6 +129,14 @@ Generate topology and position restraints
 
 cd gromacs/coord
 
+# Check if user-defined file exists. Exit if file not found.
+if [ ! -e $protein_name.pdb ]; then
+    echo "[Chikaterasu] PDB input file does not exist in ./gromacs/coord/ folder. Exiting!"
+    exit 2
+  else
+    echo "[Chikaterasu] Found PDB input file. Will now convert to gromacs format."
+fi
+
 # Case a: normal protein simulation, no added molecules
 # insert_small_molecules=false
 
