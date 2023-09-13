@@ -9,7 +9,7 @@ integrator = md  ; leap-frog integrator
 
 ; Simulation length
 nsteps  = 50000000	; 100 ns
-dt			= 0.002		  ; thus, 2 fs
+dt			= 0.002		  ; thus, 2 fs [For RheoMD 0.001; needs large box otherwise error from skewdness]
 
 ; Output
 nstxout	  = 10000  ; save coordinates every 20.0 ps [can increase this to save disk space]
