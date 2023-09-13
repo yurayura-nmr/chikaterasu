@@ -21,19 +21,42 @@ Usage
 1. Put PDB file of your system to be simulated into ./gromacs/coord/          [e.g. 1UBQ.pdb]
 2. Edit the top section of chikaterasu.sh to specify its filename             [e.g. 1UBQ]
 3. Set MD parameters for NVT, NPT, and production MD in chika_mdp/~.mdp files [time, temperature, amounts of frames saved, etc.]
-4. Run chikaterasu at various levels to confirm no errors in preparation/execution of MD simulation
+4. For a new system, run chikaterasu at various levels to confirm no errors in preparation/execution of MD simulation. If the system is already known to behave well, can go straight to a full run (level 0) and skip the individual levels (1-6).
 
 Run chikaterasu at level 1::
 
   sh chikaterasu.sh 1 
   # Tests if pdb format to gromacs conversion works. Make sure no errors or warnings are given by GROMACS.
 
-5. sh chikaterasu.sh 2 -> test if protein could be solvated in the box. Make sure no errors before continuing.
-6. sh chikaterasu.sh 3 ->
-7. sh chikaterasu.sh 4 ->
-8. sh chikaterasu.sh 5 -> Test if the first equilibration step (100 ps NVT) is working without any issues.
-9. sh chikaterasu.sh 6 -> Test if all equilibration steps including 100 ps NPT are working without any issues.
-10. sh chikaterasu.sh 0 -> Start production MD
+Run chikaterasu at level 2::
+ 
+  sh chikaterasu.sh 2
+  # Tests if protein could be solvated in the box. Make sure no errors before continuing.
+
+Run chikaterasu at level 3::
+ 
+  sh chikaterasu.sh 3
+  # Tests if ...
+
+Run chikaterasu at level 4::
+
+  sh chikaterasu.sh 4
+  # Tests if ...
+
+Run chikaterasu at level 5::
+
+  sh chikaterasu.sh 5
+  # Tests if the first equilibration step (100 ps of NVT position-restrained simulation) is working without any issues.
+
+Run chikaterasu at level 6::
+
+  sh chikaterasu.sh 6
+  # Tests if all equilibration steps including the final 100-ps NPT position-restrained simulation are working without any issues.
+
+Finally, run chikaterasu at production level (0)::
+ 
+  sh chikaterasu.sh 0
+  # Starts production MD
 
 Change log
 ----------
