@@ -3,11 +3,10 @@
 : '
 *************************************************************
 Chikaterasu         version dev
-gmx                 tested for versions 2018, 2019, 2021.1, 2022.3
-                    Parts of the no-protein setup seem not to
-                    work with gmx 2019
+gmx                 2022.3
 
-Last change         see github
+Last changes        see github
+Issues              see github
 
 Erik Walinda
 Kyoto University
@@ -90,9 +89,6 @@ If well programmed no change should be necessary from here
 Setup directories for the run
 *************************************************************
 '
-
-node_name=$(hostname)   # for report; to do: make report
-gromacs_version="2021"  # for report; to do: get from gmx output
 
 if [ -z "$1" ]
 then
