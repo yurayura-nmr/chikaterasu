@@ -90,6 +90,13 @@ Setup directories for the run
 *************************************************************
 '
 
+if [ -d "./runs" ]; then
+    echo "[Chikaterasu] A folder named ./runs already exists. This suggests that Chikaterasu has been launched in this folder before. While this is generally no problem at all, it can lead to potential artifacts, so be warned. For example, a run that was supposed to crash due to gromacs errors in early stages can continue smoothly all the way without spotting an error just because the runs folder already contains the data for continuation. This happens for example, if an entire simulation was copied moved to start a fresh run."
+    #exit 1 # untested
+else
+    echo "[Chikaterasu] Starting a fresh run."
+fi
+
 if [ -z "$1" ]
 then
     echo "[Chikaterasu] Command line arguments are empty. Using manually set debug level $debug_level."
