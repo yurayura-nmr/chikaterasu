@@ -1,12 +1,12 @@
-If using distance restraints, need to modify the mdp files in the chika_mdp folder
-----------------------------------------------------------------------------------
+Using distance restraints in GROMACS
+------------------------------------
 
-This is not automatically done.
+If using distance restraints, need to modify the mdp files in the chika_mdp folder as follows (this is not automatically done).
 
 To nvt.mdp
 """"""""""
 
-define  = -DPOSRES -DDISRES     ; position restrain the protein
+define  = -DPOSRES -DDISRES     ; position restrain the protein (default) and additionally add distance restraints as specified by custom itp file.
 disre   = simple                ; Enable Distance Restraints
 
 To npt.mdp
