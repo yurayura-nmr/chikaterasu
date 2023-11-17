@@ -65,8 +65,8 @@ Finally, run chikaterasu at production level (0)::
 Special bonds
 -------------
 
-Zinc
-""""
+Zinc coordination
+"""""""""""""""""
 
 (in the case of Zn2+ ions (or similar) in the input PDB file.)
 
@@ -89,6 +89,21 @@ In the chikaterasu base folder, provide an additional file containing the distan
     2768 3358   1   3     1     0.0 0.23 0.3 1      ; CYS211 SG <> Zn2+
     2811 3358   1   4     1     0.0 0.23 0.3 1      ; CYM214 SG <> Zn2+
   #endif
+
+Next, in chikaterasu.sh, set the distance restraints flag to true::
+
+  distance_restratints=true
+
+Finally, we need some Zn2+-protein bonds. Make another file called "metal_protein_bonds.top" or something like that::
+
+  2564  3358     6 0.24  4000    ; 16 CYS-SG G-C-T
+  2595  3358     6 0.24  4000    ; 13 CYS-SG Q-C-P
+  2768  3358     6 0.24  4000    ; 27 CYS-SG G-C-E
+  2811  3358     6 0.24  4000    ; 30 CYS-SG G-C-C
+
+Now, unfortunately, this is not yet automatically integrated into final topology file topol.top.
+Thus, chikaterasu will pause once to give the user the chance to ninja-edit the topol.top by adding these special bonds, right before going to energy minimization.
+
 
 
 Modelling missing loops in the structure
