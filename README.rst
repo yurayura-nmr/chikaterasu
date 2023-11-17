@@ -18,6 +18,10 @@ Check gmx --version to see if everything works (GPU/cuda properly recognized? et
 Usage
 -----
 
+In linux::
+
+  git clone https://github.com/yurayura-nmr/chikaterasu.git
+
 1. Put PDB file of your system to be simulated into ./gromacs/coord/          [e.g. 1UBQ.pdb]
 2. Edit the top section of chikaterasu.sh to specify its filename             [e.g. 1UBQ]
 3. Set MD parameters for NVT, NPT, and production MD in chika_mdp/~.mdp files [time, temperature, amounts of frames saved, etc.]
