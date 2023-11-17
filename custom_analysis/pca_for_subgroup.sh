@@ -4,7 +4,9 @@
 echo "[ Chikaterasu ] PCA analysis will take a while ..."
 echo "[ Chikaterasu ] 1. Building covariance matrix ..."
 
-gmx covar -s ../md_target.tpr -f ../md_fit.xtc -o ./eigenval.xvg -av ./average.pdb -n pca_target.ndx
+gmx covar -s ../md_target.tpr -f ../md_fit.xtc -o ./eigenval.xvg -av ./average.pdb -n pca_target.ndx -l covar.log -xpm covar.xpm -xpma covar_atomic.xpm -ascii covar.dat
+gmx xpm2ps -f covar.xpm
+gmx xpm2ps -f covar_atomic.xpm
 
 echo "[ Chikaterasu ] 2. Analyze first three eigenvectors ..."
 #gmx anaeig -s ../md_target.tpr -f ../md_fit.xtc -first 1 -last 3 -extr ./extreme_pcavec.pdb -nframes 30 -entropy -n pca_target.ndx
