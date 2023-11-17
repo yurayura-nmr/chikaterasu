@@ -50,7 +50,7 @@ Run chikaterasu at level 4::
 Run chikaterasu at level 5::
 
   sh chikaterasu.sh 5
-  # Tests if the first equilibration step (100 ps of NVT position-restrained simulation) is working without any issues.
+  # Tests if the first equilibration step (100 ps of NVT position-restrained simulation) is working without any issues. From here on the GPU is actually used. Sometimes the nvidia driver disconnects itself and will require a reboot before working again.
 
 Run chikaterasu at level 6::
 
