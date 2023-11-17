@@ -68,9 +68,11 @@ Special bonds
 Metal coordination
 """"""""""""""""""
 
+Coordination bonds are formed between Lewis acids (e.g., Zn2+) and Lewis bases (e.g., thiol groups R-S-H or R-S(-)). Lone pair electrons on S atom to Zn2+ d-orbital.
+
 The example here is written for the case of Zn2+ ions bound to a protein in the input PDB file. Similar steps should work for other ions (Ca2+, Mg2+, etc.).
 
-Choose 2 coordinating Cys residues and define them as CYM (instead of CYS) in the PDB file to ensure charge neutrality (Zn2+ + Cym- + Cym-). For this example, let us assume that CYS residues Cys197 and Cys214 were chosen as CYM residues. Cys200 and Cys211 are chosen as regular CYS residues.
+Choose 2 coordinating Cys residues and define them as CYM (instead of CYS) in the PDB file to ensure local charge neutrality (Zn2+ + Cym- + Cym-). For this example, let us assume that CYS residues Cys197 and Cys214 were chosen as CYM residues. Cys200 and Cys211 are chosen as regular CYS residues.
 
 Now we need to topology::
 
