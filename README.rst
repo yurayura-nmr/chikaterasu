@@ -83,7 +83,7 @@ Enter loop segments (residue:chain_ID:residue:chain_ID)::
 
   70:A:71:A:
 
-For that the uploaded pdb file needs to be tuned so that (in this example) ALA71 already exists. i.e., add dummy atoms like this in a text editor (positions should not matter and probably can even be 0 0 0):
+For that the uploaded pdb file needs to be tuned so that (in this example) ALA71 already exists. i.e., add dummy atoms like this in a text editor (positions should not matter and probably can even be 0 0 0)::
 
   ATOM    556  N   ALA A  71      32.763  35.831  23.090  1.00 12.71           N
   ATOM    557  CA  ALA A  71      34.145  35.472  23.481  1.00 16.06           C
