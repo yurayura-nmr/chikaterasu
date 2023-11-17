@@ -62,6 +62,35 @@ Finally, run chikaterasu at production level (0)::
   sh chikaterasu.sh 0
   # Starts production MD
 
+Special bonds
+-------------
+
+Zinc
+""""
+
+In the case of Zn2+ ions (or similar) in the input PDB file::
+
+  ./chikaterasu.sh 0   # this should run normally
+
+Modelling missing loops in the structure
+----------------------------------------
+
+1. Go to: https://modbase.compbio.ucsf.edu/modloop/
+2. Using registered email address and license key - MODELIRANJE
+3. Upload coordinate file - file.pdb
+
+Enter loop segments (residue:chain_ID:residue:chain_ID)::
+
+  70:A:71:A:
+
+For that the uploaded pdb file needs to be tuned so that (in this example) ALA71 already exists. i.e., add dummy atoms like this in a text editor (positions should not matter and probably can even be 0 0 0):
+
+  ATOM    556  N   ALA A  71      32.763  35.831  23.090  1.00 12.71           N
+  ATOM    557  CA  ALA A  71      34.145  35.472  23.481  1.00 16.06           C
+  ATOM    558  C   ALA A  71      34.239  35.353  24.979  1.00 18.09           C
+  ATOM    559  O   ALA A  71      33.707  36.197  25.728  1.00 19.26           O
+
+
 Change log
 ----------
 
