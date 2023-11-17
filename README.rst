@@ -72,6 +72,18 @@ In the case of Zn2+ ions (or similar) in the input PDB file::
 
   ./chikaterasu.sh 0   # this should run normally
 
+In the chikaterasu base folder, provide an additional file containing the distance restraints for the Zn2+ ion (e.g., to coordinating His or Cys residues). As an example distance_restraints.itp file::
+
+  #ifdef DISRES
+  [ distance_restraints ]
+  ; ai aj type index type’ low up1 up2 fac
+    2564 3356   1   1     1     0.0 0.23 0.3 1
+    2595 3356   1   2     1     0.0 0.23 0.3 1
+    2766 3356   1   3     1     0.0 0.23 0.3 1
+    2809 3356   1   4     1     0.0 0.23 0.3 1
+  #endif
+
+
 Modelling missing loops in the structure
 ----------------------------------------
 
