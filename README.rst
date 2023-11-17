@@ -102,8 +102,7 @@ Finally, we need some Zn2+-protein bonds. Make another file called "metal_protei
   2811  3358     6 0.24  4000    ; 30 CYS-SG G-C-C
 
 Now, unfortunately, this is not yet automatically integrated into final topology file topol.top.
-Thus, chikaterasu will pause once to give the user the chance to ninja-edit the topol.top by adding these special bonds, right before going to energy minimization.
-
+Thus, chikaterasu will pause once to give the user the chance to ninja-edit the topol.top by adding these special bonds, right before going to energy minimization. In the future, this will be automated so that the metal_protein_bonds.top file is read automatically into topol.top and this user-invention is not required. 
 
 
 Modelling missing loops in the structure
