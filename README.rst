@@ -68,19 +68,26 @@ Special bonds
 Zinc
 """"
 
-In the case of Zn2+ ions (or similar) in the input PDB file::
+(in the case of Zn2+ ions (or similar) in the input PDB file.)
 
-  ./chikaterasu.sh 0   # this should run normally
+Choose 2 coordinating Cys residues and define them as CYM (instead of CYS) in the PDB file to ensure charge neutrality (Zn2+ + Cym- + Cym-). For this example, let us assume that CYS residues Cys197 and Cys214 were chosen as CYM residues. Cys200 and Cys211 are chosen as regular CYS residues.
+
+Now we need to topology::
+
+  ./chikaterasu.sh 1   # this should run normally
+
+Now the topology is already accessible in gromacs/top. We can see the atom numbers as defined by GROMACS (not the PDB file). Find the atom number of the Zn2+ ion and note it down (let's say, it is 3358). This will be used soon.
+Also find the atom numbers of all the coordinating (e.g., S-gamma atoms of Cys residues. Let us say for this example, they are 2564, 2595, 2768, and 2811.
 
 In the chikaterasu base folder, provide an additional file containing the distance restraints for the Zn2+ ion (e.g., to coordinating His or Cys residues). As an example distance_restraints.itp file::
 
   #ifdef DISRES
   [ distance_restraints ]
   ; ai aj type index type’ low up1 up2 fac
-    2564 3356   1   1     1     0.0 0.23 0.3 1
-    2595 3356   1   2     1     0.0 0.23 0.3 1
-    2766 3356   1   3     1     0.0 0.23 0.3 1
-    2809 3356   1   4     1     0.0 0.23 0.3 1
+    2564 3358   1   1     1     0.0 0.23 0.3 1      ; CYM197 SG <> Zn2+
+    2595 3358   1   2     1     0.0 0.23 0.3 1      ; CYS200 SG <> Zn2+  
+    2768 3358   1   3     1     0.0 0.23 0.3 1      ; CYS211 SG <> Zn2+
+    2811 3358   1   4     1     0.0 0.23 0.3 1      ; CYM214 SG <> Zn2+
   #endif
 
 
