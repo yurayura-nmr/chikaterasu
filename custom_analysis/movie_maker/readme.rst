@@ -49,6 +49,7 @@ If VMD, make representations for each part of the molecule we are interested in 
   resid 77 to 152
   resid 191 to 248
   ... and color each by ColorID
+  ... and maybe add (transparant) surface representations
 
 Using nglview
 -------------
