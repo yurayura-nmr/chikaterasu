@@ -19,16 +19,19 @@ Convert tpr to gro::
 
   .\gmx.exe editconf -f md_target.tpr -o .\md_target.gro
 
-Load both gro and xtc in chimerax. Select and color as wished::
+Load both gro and xtc in Chimerax. Select and color as wished::
   
   color /?:1-76 blue
   color /?:77-152 green
   color /?:191-248 grey  
   color @ZN grey
 
+Set snail to 1.
 Press "movie record" or write (very slow to supersample)::
 
   movie record supersample 2
+
+It will play the trajectory and while that is going on, capture the images and then after done encode the movie.
 
 Using nglview
 -------------
