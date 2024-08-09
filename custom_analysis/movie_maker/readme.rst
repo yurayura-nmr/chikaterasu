@@ -12,7 +12,7 @@ All options can be off, we just want the centered xtc file with PBC removed.
 
 Copy these two files to a folder which we want to see::
 
-* md_target_centered_no_PBC.xtc
+* md_fit.xtc
 * md_target.tpr
 
 Convert tpr to gro::
