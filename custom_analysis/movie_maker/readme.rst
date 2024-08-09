@@ -1,6 +1,13 @@
 Movie Maker
 -----------
 
+1. Filter down
+""""""""""""""
+
+Making movies takes time, especially in Chimera.
+Best, first select only the trajectory where a movie is really necessary (i.e., do other analysis first).
+
+
 1. Get processed trajectory
 """""""""""""""""""""""""""
 
@@ -19,7 +26,10 @@ Convert tpr to gro::
 
   .\gmx.exe editconf -f md_target.tpr -o .\md_target.gro
 
-Load both gro and xtc in Chimerax. Select and color as wished::
+2. Load the data
+""""""""""""""""
+
+Load both gro and xtc in Chimerax or in VMD. Syntax of course differs - if ChimeraX, select and color as wished::
   
   color /?:1-76 blue
   color /?:77-152 green
