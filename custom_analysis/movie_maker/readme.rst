@@ -11,6 +11,8 @@ Best, first select only the trajectory where a movie is really necessary (i.e., 
 1. Get processed trajectory
 """""""""""""""""""""""""""
 
+Set dt = 1000, unless we need really detailed movies.
+
 Execute::
 
   ./ana_chikaterasu.sh
@@ -50,6 +52,7 @@ If VMD, make representations for each part of the molecule we are interested in 
   resid 191 to 248
   ... and color each by ColorID
   ... and maybe add (transparant) surface representations
+  ... and maybe trajectory smoothing to 1
 
 Using nglview
 -------------
