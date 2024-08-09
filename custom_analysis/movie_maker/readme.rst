@@ -43,11 +43,12 @@ Press "movie record" or write (very slow to supersample)::
 
 It will play the trajectory and while that is going on, capture the images and then after done encode the movie.
 
-If VMD, make representations for each part of the molecule we are interested in (Selected Atoms in representations):
+If VMD, make representations for each part of the molecule we are interested in (Selected Atoms in representations)::
 
   resid 1 to 76
   resid 77 to 152
   resid 191 to 248
+  ... and color each by ColorID
 
 Using nglview
 -------------
