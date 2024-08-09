@@ -1,10 +1,11 @@
-Movie Maker
------------
+Making movies
+-------------
 
 1. Filter down
 """"""""""""""
 
 Making movies takes time, especially in Chimera.
+More than just time, in VMD and Chimera it takes manual work.
 Best, first select only the trajectory where a movie is really necessary (i.e., do other analysis first).
 
 
