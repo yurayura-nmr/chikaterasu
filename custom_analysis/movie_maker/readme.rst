@@ -54,6 +54,9 @@ If VMD, make representations for each part of the molecule we are interested in 
   ... and color each by ColorID
   ... and maybe add (transparant) surface representations
   ... and maybe trajectory smoothing to 1
+  ... and maybe set step to 10 to reduce the total frame count.
+
+Extensions -> Movie generator: movie settings - trajectory -> renderer: tachyon-Optix (GPU)
 
 Using nglview
 -------------
