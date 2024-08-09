@@ -26,7 +26,9 @@ Load both gro and xtc in chimerax. Select and color as wished::
   color /?:191-248 grey  
   color @ZN grey
 
-Press "movie record". 
+Press "movie record" or write (very slow to supersample)::
+
+  movie record supersample 2
 
 Using nglview
 -------------
