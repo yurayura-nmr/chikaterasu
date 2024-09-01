@@ -90,10 +90,15 @@ Specify the two atoms between which the distance
 is to be calculated from the topology file.
 Splitting into domain of a multidomain protein
 is not necessary for this.
+
+Pair 1 is atom1-atom2 
+Pair 2 is atom3-atom4
 *************************************************************
 '
 atom1=701
 atom2=1931
+atom3=701
+atom4=1931
 
 : '
 *************************************************************
@@ -469,7 +474,17 @@ do
       echo "$atom1 $atom2" >> ./distance/chikaterasu.ndx
 
       printf "0\n" | gmx distance -f md_fit.xtc -s md_target.tpr -n ./distance/chikaterasu.ndx -oall ./distance/distance.xvg
+
+      mv ./distance/distance.xvg ./distance/distance_1.xvg
+      rm ./distance/chikaterasu.ndx
+
+      echo "[ Chikaterasu Distance $atom3 to Residue $atom4 ]" > ./distance/chikaterasu.ndx
+      echo "$atom3 $atom4" >> ./distance/chikaterasu.ndx
+
+      printf "0\n" | gmx distance -f md_fit.xtc -s md_target.tpr -n ./distance/chikaterasu.ndx -oall ./distance/distance.xvg
+      mv ./distance/distance.xvg ./distance/distance_2.xvg
   fi
+
 
   : '
   *************************************************************
