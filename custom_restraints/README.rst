@@ -18,5 +18,5 @@ To npt.mdp::
 
 To md.mdp::
 
-  define  = -DDISRES              ; only position restrains left
+  define  = -DDISRES              ; only distance restrains left (no need to position restraint in production MD)
   disre   = simple                ; Enable Distance Restraints
