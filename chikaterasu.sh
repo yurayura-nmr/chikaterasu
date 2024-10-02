@@ -320,8 +320,14 @@ if [ "$distance_restraints" = true ] ; then
 
     #exit 1
 
-    echo "[Chikaterasu-dev] Added distance restraints to topology file. If using Zn2+ ion, manually edit the topol.top now to add protein-Zn2+ bonds in the [bonds] section."
-    read -p "[Chikaterasu-dev] Distance restraints are ON. Continue?" dummy
+    echo "[Chikaterasu-dev] Added distance restraints to topology file."
+    echo "[Chikaterasu-dev] Make sure the topology file is correct."
+    echo "[Chikaterasu-dev] e.g., if using Zn2+ ion, confirm the topol.top now to make sure the correct protein-Zn2+ bonds have been added to the [bonds] and before the [pairs] section."
+
+    sed -i "/\[ pairs ]/i $(sed ':a;N;$!ba;s/\n/\\n/g' zn_bond.top)" gromacs/top/topol.top
+
+    read -p "[Chikaterasu-dev] Distance restraints are ON. zn_bond.top has been appended to the topology. Continue?" dummy
+
 
 fi
 
