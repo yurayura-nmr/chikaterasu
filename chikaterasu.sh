@@ -289,7 +289,7 @@ disre   = simple                ; Enable Distance Restraints
 
 MD
 
-define  = -DDISRES              ; only position restrains left
+define  = -DDISRES              ; only distance restrains left
 disre   = simple                ; Enable Distance Restraints
 
 Make sure that numbers in distance restraint file match
@@ -321,6 +321,7 @@ if [ "$distance_restraints" = true ] ; then
     #exit 1
 
     echo "[Chikaterasu-dev] Added distance restraints to topology file."
+    echo "[Chikaterasu-dev] Make sure mdp file md.mdp also contains define -DDISRES . Otherwise the distance restraints are ignored even though we included them in the topology."
     echo "[Chikaterasu-dev] Make sure the topology file is correct."
     echo "[Chikaterasu-dev] e.g., if using Zn2+ ion, confirm the topol.top now to make sure the correct protein-Zn2+ bonds have been added to the [bonds] and before the [pairs] section."
 
