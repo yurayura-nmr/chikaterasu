@@ -2,99 +2,109 @@
 
 : '
 *************************************************************
-Chikaterasu         version dev
-gmx                 2022.3
+Chikaterasu         Version: dev
+gmx                 Version: 2022.3
 
-Last changes        see github
-Issues              see github
+For recent changes or issues, please refer to the GitHub repository.
 
-Erik Walinda
-Kyoto University
-Graduate School of Medicine
-
+Author: Erik Walinda
+Affiliation: Kyoto University, Graduate School of Medicine
 *************************************************************
 '
 
 : '
 *************************************************************
-Manually setup parameters for this run
-Most parameters are defined by mdp files
-The starting PDB file should be placed into gromacs/coord
+Manual Parameter Setup for Current Run
+Note: Most parameters are configured via .mdp files.
+The starting PDB file must be placed in the gromacs/coord directory.
 
-Debug level 
-0   full production MD run [NPT]; no debug
-1   topology generation [pdb2gmx]
-2   solvation
-3   addition of counterions
-    addition of distance restraints; no debug level implemented yet
-4   energy minimization
-5   NVT done
-6   NPT done
+Debug Level Options:
+0   Full production MD run (NPT); no debug output
+1   Topology generation (pdb2gmx)
+2   Solvation step
+3   Addition of counterions and distance restraints
+4   Energy minimization
+5   NVT equilibration completed
+6   NPT equilibration completed
 *************************************************************
 '
 
-# == What to simulate ? ==
+# === Simulation Configuration ===
+protein_name="1UBQ"         # Protein or molecule to simulate. For small molecule simulations, use the appropriate file (e.g., ATP.pdb).
+nruns=1                     # Number of runs. Use 1 for testing and 10 for production-level simulations.
 
-protein_name="1UBQ"         # For small molecule simulations, this will be ATP.pdb etc. even though the variable name says protein.
-nruns=1                     # 1 for testing; 10 for production
+# === Debugging Options ===
+debug_level=0               # Set the debug level for output verbosity. Can be passed as an argument (e.g., ./chikaterasu 0).
 
-# == Debug level ==
+# === Histidine Protonation and Zn2+ Options ===
+his_manual=false            # Manually specify histidine protonation states (set to true if required).
+distance_restraints=false   # Enable distance restraints, typically used for Zn2+ interactions.
+disulfide=false             # Specify whether to account for disulfide bridges during topology generation.
 
-debug_level=0               # Manually set debug level. Or give as argument, e.g.: ./chikaterasu 0
 
-# == Histidine and Zn2+ stuff ==
+# === Ion Configuration ===
+specify_salt_concentration=true  # Specify salt concentration in molar units (true), or manually count ions (false).
+salt_concentration=0.050         # Desired salt concentration (in mol/L) if specify_salt_concentration=true.
 
-his_manual=false            # manually specify histidine protonation state
-distance_restraints=false   # for Zn2+
-disulfide=false             # do we want to account for disulfide bridges when making the topology?
+pos_ions=0                  # Number of positive ions (only applicable when manually specifying ion count).
+neg_ions=2                  # Number of negative ions (only applicable when manually specifying ion count).
 
-# === Ions ===
+magnesium=false             # If true, use Mg2+ as the positive ion; otherwise, Na+ is used by default.
 
-specify_salt_concentration=true  # Specify means in molar; not specify means to count the number of ions.
-salt_concentration=0.050
+# === Box Shape and Simulation Setup ===
+# Choose one of the following simulation scenarios:
+# a) Protein-only simulation:
+#    Set insert_small_molecules=false
+# b) Small molecule-only simulation:
+#    Set insert_small_molecules=true
+# c) Protein with small molecules:
+#    Set insert_small_molecules=true and protein_with_small_molecules=true
 
-pos_ions=0                  # only if manually specifying ions
-neg_ions=2                  # only if manually specifying ions
-
-magnesium=false             # Set Mg as the positive ion; if false it is Na.
-
-# === Box shape and size ===
-# Ideally, we want 3 options here:
-# a) simulate only a protein:          insert_small_molecules is False
-# b) simulate only small molecules     insert_small_molecules is True
-# c) both protein with small molecules insert_small_molecules is True
-#                                      protein_with_small_molecules is True
-
+# Define simulation box dimensions for molecule insertion 
 # Must set box_dim when working with inserting molecules
 insert_small_molecules=false       # If we want to simulate small molecules like ATP or sialic acid
 insert_small_molecules_number=2
 
+# Define whether to include a protein with small molecules
 protein_with_small_molecules=false
-protein_added_small_molecule_name="ATP"  # File needs to be in gromacs/coord folder; i.e., together with the protein.
+protein_added_small_molecule_name="ATP"  # Name of the small molecule to be inserted alongside the protein (file must be in the gromacs/coord directory)
 
-box_manual=false            # Specify box-size manually. 
-box_empty=false             # Water-only simulation
+# Specify box configuration options
+box_manual=false            # Enable manual specification of the box size
+box_empty=false             # Set to true for a water-only simulation (no solute)
 
-box_dim="    7.845   6.497   6.363 "  # if necessary to specify the size. e.g. ATP, rheoMD, hydrodynamics, check PBC artifacts
-cell_shape="triclinic"      # -d: triclinic, cubic, dodecahedron, octahedron
+# Manually specified box dimensions (used if box_manual=true). 
+# Box dimensions (in nm) should accommodate the solute, especially for rheological MD or hydrodynamics simulations. 
+# Ensure no periodic boundary condition (PBC) artifacts.
+box_dim="    7.845   6.497   6.363 "  
+cell_shape="triclinic"      # Available shapes: triclinic, cubic, dodecahedron, octahedron
 
-water="tip4p"               # [spce], spc, tip3p, tip4p, tip5p, ... (for tip4p2005, use tip4p and replace itp file)
-water_file="tip4p.gro"      # [spc216.gro], tip4p.gro, ..., or explicitly with directory (amber03ws.ff/tip4p2005.gro)
+# Water model selection
+water="tip4p"               #  Available options: spce, spc, tip3p, tip4p, tip5p, ... (for tip4p2005, use tip4p and replace itp file)
+water_file="tip4p.gro"      # Corresponding water model structure file (default is tip4p.gro)
 
+# NOTE: For rheological molecular dynamics (rheoMD) simulations, use SPCE water ["spce" / "spc216.gro"].
+# TIP4P water is known to cause instability and simulation blowup in these scenarios.
 
 : '
 *************************************************************
-If well programmed no change should be necessary from here
+No further modifications should be needed beyond this point.
 
-Setup directories for the run
+Setting up directories for the run.
 *************************************************************
 '
 
 if [ -d "./runs" ]; then
-    echo "[Chikaterasu] A folder named ./runs already exists. This suggests that Chikaterasu has been launched in this folder before. While this is generally no problem at all, it can lead to potential artifacts, so be warned. For example, a run that was supposed to crash due to gromacs errors in early stages can continue smoothly all the way without spotting an error just because the runs folder already contains the data for continuation. This happens for example, if an entire simulation was copied moved to start a fresh run."
-    #exit 1 # untested
+    echo "[Chikaterasu] Warning: './runs' directory already exists."
+    echo "[Chikaterasu] This suggests a previous run was initiated here."
+    echo "[Chikaterasu] While this is usually harmless, it could lead to potential artifacts."
+    echo "[Chikaterasu] For example, errors that should have caused the simulation to crash"
+    echo "[Chikaterasu] might be bypassed if existing data from a previous run is used."
+    echo "[Chikaterasu] This could happen if an entire simulation was copied or moved"
+    echo "[Chikaterasu] to this folder for a fresh run."
+    #exit 1 # Optional: uncomment to force an exit if folder exists (untested)
 else
-    echo "[Chikaterasu] Starting a fresh run."
+    echo "[Chikaterasu] No existing './runs' directory found. Starting a fresh run."
 fi
 
 if [ -z "$1" ]
