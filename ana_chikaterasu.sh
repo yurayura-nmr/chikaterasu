@@ -40,7 +40,7 @@ pbc=nojump          # mol or nojump
 proc_folder="md_"   # PREFIX for folders, e.g. md for md_1, md_2, ...
 nruns=1             # total number of runs (3 ~ 20)
 anatime=0           # analyze frames starting at time t [ps]
-on_the_fly=false    # analyze a currently active run?
+on_the_fly=false    # analyze a currently active run or a run that has been aborted (chikaterasu did not finish and did not rename folder md to md_1)
 
 # == What to analyze? ==
 rmsd=true
