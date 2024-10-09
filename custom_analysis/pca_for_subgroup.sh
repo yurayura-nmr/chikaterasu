@@ -1,5 +1,11 @@
 # First, make the target by getting all backbone atoms and then excluding unwanted parts of the topology manually
+# 1. Run GROMACS to get index.ndx file:
 # gmx make_ndx -f ../md.tpr
+# 2. Select 4 for backbone
+# 3. Select q to quit and write the index file
+# 4. In vi, open index.ndx and remove all groups except for backbone
+# 5. In vi, remove those atoms from the backbone that should be excluded from the PCA (long loops, linkers etc.)
+# 6. Run this script in the chikaterasu subdirectory results/md_1/pca after running the chikaterasu analysis script.
 
 echo "[ Chikaterasu ] PCA analysis will take a while ..."
 echo "[ Chikaterasu ] 1. Building covariance matrix ..."
