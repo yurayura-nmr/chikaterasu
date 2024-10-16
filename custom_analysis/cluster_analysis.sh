@@ -7,4 +7,7 @@
 # - Use a frame every 100 ps (-dt 100)
 #
 # Optionally, provide an index file (-n) to analyze a specific subgroup (e.g., C-alpha atoms).
+#
+# To start the analysis from a specific time point, for example after 75 nanoseconds, use:
+# -b 75 -tu ns
 gmx cluster -f ../md_target.xtc -s ../md_target.tpr -method gromos -cutoff 1 -cl -dt 100 
