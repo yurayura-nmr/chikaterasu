@@ -5,62 +5,51 @@ Chikaterasu
    :alt: Chikaterasu logo
    :align: right
 
-Bash script to automate setup of multiple identical MD simulations.
-MD parameters are for the amber-type forcefields such as amber99sb-ildn and amber03ws.
+Chikaterasu is a Bash script designed to automate the setup of multiple identical molecular dynamics (MD) simulations. Current parameters are taken for the amber-type force fields like amber99sb-ildn and amber03ws.
+
 
 Requirements
 ------------
 
-GROMACS is used. Any recent version should work. 
-To install GROMACS, download it, extract it, and build from source with GPU support.
-Check gmx --version to see if everything works (GPU/cuda properly recognized? etc.).
+Chikaterasu requires GROMACS, and any recent version should be compatible. To install GROMACS, download, extract, and build from source with GPU support. Verify installation by running::
+
+  gmx --version
+
+Ensure the GPU and CUDA are recognized correctly.
 
 Usage
 -----
 
-In linux::
+Clone the repository::
 
   git clone https://github.com/yurayura-nmr/chikaterasu.git
 
-1. Put PDB file of your system to be simulated into ./gromacs/coord/          [e.g. 1UBQ.pdb]
-2. Edit the top section of chikaterasu.sh to specify its filename             [e.g. 1UBQ]
-3. Set MD parameters for NVT, NPT, and production MD in chika_mdp/~.mdp files [time, temperature, amounts of frames saved, etc.]
-4. For a new system, run chikaterasu at various levels to confirm no errors in preparation/execution of MD simulation. If the system is already known to behave well, can go straight to a full run (level 0) and skip the individual levels (1-6).
+Setup Steps
+"""""""""""
 
-Run chikaterasu at level 1::
+1. Place your system’s PDB file (e.g., 1UBQ.pdb) in ./gromacs/coord/.         [e.g. 1UBQ.pdb]
+2. Edit the filename in the top section of chikaterasu.sh (e.g., 1UBQ).       [e.g. 1UBQ]
+3. Configure MD parameters in chika_mdp/*.mdp files, setting values for NVT, NPT, and production MD stages (e.g., time, temperature, frame frequency).
+4. For new systems, test each level incrementally (1–6) to confirm successful MD preparation and execution. For familiar systems, a full run can be initiated at level 0.
 
-  sh chikaterasu.sh 1 
-  # Tests if pdb format to gromacs conversion works. Make sure no errors or warnings are given by GROMACS.
+Execution Levels
+""""""""""""""""
 
-Run chikaterasu at level 2::
+Use the following commands to run Chikaterasu at various levels:
+
+Level 1: Checks PDB to GROMACS conversion::
+
+  sh chikaterasu.sh 1  
+
+Level 2: Tests protein solvation::
  
   sh chikaterasu.sh 2
-  # Tests if protein could be solvated in the box. Make sure no errors before continuing.
 
-Run chikaterasu at level 3::
- 
-  sh chikaterasu.sh 3
-  # Tests if ...
+Level 3 - Level 6: Sequential tests for preparation, ending with equilibration stages.
 
-Run chikaterasu at level 4::
+Production (Level 0): Start production MD::
 
-  sh chikaterasu.sh 4
-  # Tests if ...
-
-Run chikaterasu at level 5::
-
-  sh chikaterasu.sh 5
-  # Tests if the first equilibration step (100 ps of NVT position-restrained simulation) is working without any issues. From here on the GPU is actually used. Sometimes the nvidia driver disconnects itself and will require a reboot before working again.
-
-Run chikaterasu at level 6::
-
-  sh chikaterasu.sh 6
-  # Tests if all equilibration steps including the final 100-ps NPT position-restrained simulation are working without any issues.
-
-Finally, run chikaterasu at production level (0)::
- 
   sh chikaterasu.sh 0
-  # Starts production MD
 
 Special bonds
 -------------
@@ -113,52 +102,5 @@ In the future, this will be automated so that the metal_protein_bonds.top file i
 Modelling missing loops in the structure
 ----------------------------------------
 
-1. Go to: https://modbase.compbio.ucsf.edu/modloop/
-2. Using registered email address and license key - MODELIRANJE
-3. Upload coordinate file - file.pdb
-
-Enter loop segments (residue:chain_ID:residue:chain_ID)::
-
-  70:A:71:A:
-
-For that the uploaded pdb file needs to be tuned so that (in this example) ALA71 already exists. i.e., add dummy atoms like this in a text editor (positions should not matter and probably can even be 0 0 0)::
-
-  ATOM    556  N   ALA A  71      32.763  35.831  23.090  1.00 12.71           N
-  ATOM    557  CA  ALA A  71      34.145  35.472  23.481  1.00 16.06           C
-  ATOM    558  C   ALA A  71      34.239  35.353  24.979  1.00 18.09           C
-  ATOM    559  O   ALA A  71      33.707  36.197  25.728  1.00 19.26           O
-
-
-Change log
-----------
-
-2021-10-24
-""""""""""
-
-Added just another folder for user-specific (non-automatable specific) analysis.
-(not overwritten by the cleanup function)
-
-Such as specific PCA of only atoms 1-70 of Ub2.
-Or just 1 basepair of a DNA.
-                    
-Before that: (February)
------------------------
-
-Added Mg ion functionality  [tested a bit, but may still have bugs]
-
-Added insert molecules      [tested a bit, but may still have bugs]
-
-
-To do
------
-
-chikaterasu.sh
-""""""""""""""
-
-* Issue warning if low on disk space before starting a new run.
-* ss untested and only implemented for His=false yet
-* re-add dssp function: 
-* gmx xpm2ps -f ss.xpm -di dssp.m2p
-
-ana_chikaterasu.sh
-""""""""""""""""""
+For loop modeling, use UCSF’s ModLoop service with your modified PDB file to define loop segments (e.g., 70:A:71:A).
+Alternatives are SwissModel or AlphaFold.
