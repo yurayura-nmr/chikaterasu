@@ -427,10 +427,10 @@ do
 
         cp ../../chika_mdp/md.mdp ./md.mdp
 
-        gmx editconf -f md.tpr -o system_before_md.pdb
-        gmx editconf -f md.tpr -o md.gro
-
         gmx grompp -f ./md.mdp -c ../npt/npt.gro -t ../npt/npt.cpt -p ../../gromacs/top/topol.top -o md.tpr -maxwarn 1
+
+        #gmx editconf -f md.tpr -o system_before_md.pdb  # moved here and commented out for now (2025/1) since not really used
+        #gmx editconf -f md.tpr -o md.gro                # moved here and commented out for now (2025/1) since not really used
         
         # Note (added 20220509): when using mdrun deform option for rheo. MD, a bug seems to exist somehow.
         # Thread-MPI optimization somehow does not work; however, if the next line is changed to ... it works! (no optimization though?)
