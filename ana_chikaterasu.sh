@@ -76,7 +76,10 @@ since for each timestep the fitting to the initial frame structure will be diffe
 
 indexFileProvided: 
 Are you providing a file with the atom numbers for analysis? [chika.ndx]
-(if yes: provide a chika.ndx file in main folder). This specifies what atom groups to analyze
+(if yes: provide a chika.ndx file in main folder). 
+This specifies what atom groups to analyze.
+For example, to get RMSD or RMSF of a single domain, use gmx make_ndx to extra
+C-alpha atoms for a given region and save the resulting index.ndx as chika.ndx
 *************************************************************
 '
 indexFileProvided=false     
@@ -233,6 +236,8 @@ do
   For now, only simple protein behaviour is implemented.
   *************************************************************
   '
+  printf "\n**************** PBC Removal ***************\n\n"
+  
   if [ "$dna" = true ] ; then
       printf "DNA\nSystem" | gmx trjconv -s md_target.tpr -f md_target.xtc -center -ur compact -pbc $pbc -o md_target_centered_no_PBC.xtc
   fi
@@ -281,6 +286,8 @@ do
   DNA version not implemeted yet.
   *************************************************************
   '
+  printf "\n**************** RMSD Analysis ***************\n\n"
+  
   if [ "$rmsd" = true ] ; then
       if [ "$indexFileProvided" = false ] ; then
           printf "C-alpha\nC-alpha" | gmx rms -s md_target.tpr -f ./md_fit.xtc -o ./rmsd/rmsd.xvg -fit rot+trans
@@ -288,7 +295,7 @@ do
       if [ "$indexFileProvided" = true ] ; then
           for k in `seq 1 $nchains`;
           do
-              gmx rms -s md_target.tpr -f ./md_fit.xtc -o ./rmsd/rmsd_$k.xvg -n ../../chika.ndx -fit rot+trans
+              gmx rms -s md_target.tpr -f ./md_fit.xtc -o ./rmsd/selected_region_rmsd_$k.xvg -n ../../chika.ndx -fit rot+trans
           done
       fi
    fi
@@ -300,6 +307,8 @@ do
   DNA version not implemeted yet.
   *************************************************************
   '
+  printf "\n**************** RMSD Analysis ***************\n\n"
+  
   if [ "$rmsf" = true ] ; then
       if [ "$indexFileProvided" = false ] ; then
           printf "C-alpha\n" | gmx rmsf -s md_target.tpr -f ./md_fit.xtc -o ./rmsf/rmsf.xvg -fit -res -b $anatime
@@ -307,7 +316,7 @@ do
       if [ "$indexFileProvided" = true ] ; then
           for j in `seq 1 $nchains`;
           do
-              gmx rmsf -s md_target.tpr -f ./md_fit.xtc -o ./rmsf/rmsf_$j.xvg -n ../../chika.ndx -fit -res -b $anatime
+              gmx rmsf -s md_target.tpr -f ./md_fit.xtc -o ./rmsf/selected_region_rmsf_$j.xvg -n ../../chika.ndx -fit -res -b $anatime
           done
       fi
   fi
