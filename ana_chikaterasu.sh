@@ -307,7 +307,7 @@ do
   DNA version not implemeted yet.
   *************************************************************
   '
-  printf "\n**************** RMSD Analysis ***************\n\n"
+  printf "\n**************** RMSF Analysis ***************\n\n"
   
   if [ "$rmsf" = true ] ; then
       if [ "$indexFileProvided" = false ] ; then
