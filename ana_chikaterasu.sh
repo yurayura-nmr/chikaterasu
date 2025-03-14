@@ -374,6 +374,7 @@ do
       # * To achieve that, we use awk to so that only this section is in the data is in the ndx that will be the input for the perl script.
 
       # read -p "[Chikaterasu-dev] Make sure that plot_hbmap.pl is in the PATH and executable." dummy
+      echo "[Chikaterasu-dev] Attempting to call the perl script for hydrogen bond analysis (make sure it is in path and exectuable)."
       awk '/hbond/{y=1;next}y' hbond.ndx > analyze.ndx
       plot_hbmap.pl -s ../target.pdb -map hbmap.xpm -index analyze.ndx
 
