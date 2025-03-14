@@ -48,8 +48,8 @@ rmsf=true
 traj=true
 dt=10               # time interval for various analysis functions [ps]. E.g. traj, hbond
 vmd=false
-gyration=false      # Calculate R_gyr
-hbond=false
+gyration=false      # Calculate radius of gyration
+hbond=false         # Analyze hydrogen bonding pattern
 distance=false
 sasa=false
 pca=false
@@ -357,6 +357,7 @@ do
   And then check by if statements, which one to do
   *************************************************************
   '
+  printf "\n**************** Hydrogen Bonding Analysis ***************\n\n"
   if [ "$hbond" = true ] ; then
       cd hbond
       printf "MainChain+H\nMainChain+H" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn hbond.ndx -num backbone_backbone.xvg -dt $dt
