@@ -9,4 +9,4 @@ gmx convert-tpr -s md.tpr -extend 0 -o md_continued.tpr
 # gmx convert-tpr -s md.tpr -extend 100000 -o md_continued.tpr
 
 # Resume the MD run using checkpoint data, enabling GPU acceleration where applicable.
-gmx mdrun -s md_continued.tpr -cpi md.cpt -deffnm md -nb gp
+gmx mdrun -s md_continued.tpr -cpi md.cpt -deffnm md -nb gpu
