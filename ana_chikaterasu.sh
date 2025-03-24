@@ -8,16 +8,7 @@ Erik Walinda
 Kyoto University
 Graduate School of Medicine
 
-Last change: 2022-12-14
-Added dipole (untested)
-to add: gmx cluster -f md_protein.xtc -s md_protein.tpr -method gromos -cl cluster.pdb -g cluster.log -cutoff 0.2
-
-gmx version         2021
-chikaterasu version dev
-
-Notes to self:
-
-* signed principal axis may not correctly work with 3DNA for now ... (does not always find Helix axis?)
+Change log: see github
 *************************************************************
 '
 
@@ -509,7 +500,9 @@ do
   
   : '
   *************************************************************
-  Principal component analysis  
+  Principal component analysis
+  Entropy calculation is found in gromacs thermochemistry.cpp
+  calcSchlitterEntropy() (Chem. Phys. Lett. 215;6 1993)
   *************************************************************
   : '
   if [ "$pca" = true ] ; then
