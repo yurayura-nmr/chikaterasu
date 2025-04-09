@@ -10,3 +10,6 @@ gmx convert-tpr -s md.tpr -extend 0 -o md_continued.tpr
 
 # Resume the MD run using checkpoint data, enabling GPU acceleration where applicable.
 gmx mdrun -s md_continued.tpr -cpi md.cpt -deffnm md -nb gpu
+
+# In some cases (sudden power outages), the md.cpt conflict with md.xtc, in that case, adjust the above to:
+#gmx mdrun -s md_continued.tpr -cpi md_prev.cpt -deffnm md -nb gpu
