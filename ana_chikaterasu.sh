@@ -23,9 +23,9 @@ etc.
 cleanup=true
 
 # == Most important parameters (most often set wrong :)) ==
-dna=false            # DNA or protein?
+dna=false           # DNA or protein?
 fit=true            # rot_trans fit before analysis. AVOID for RheoMD if studying alignment
-pbc=nojump          # mol or nojump
+pbc=mol             # mol (default) or nojump (for protein complexes)
 
 # == Where are the data? How many runs? ==
 proc_folder="md_"   # PREFIX for folders, e.g. md for md_1, md_2, ...
