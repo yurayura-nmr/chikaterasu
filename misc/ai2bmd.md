@@ -81,3 +81,8 @@ docker run --rm --gpus all nvidia/cuda:12.2.0-base-ubuntu20.04 nvidia-smi
 
 You should see your GPU listed just like on the host system.
 
+Next steps for visualizing the results.
+
+```bash
+sudo apt install pymol
+```
