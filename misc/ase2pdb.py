@@ -13,3 +13,5 @@ write('example.pdb', traj)
 # Better for pymol - convert to dcd format
 # traj2dcd.py is found in ai2bmbd github /src/utils
 python3 traj2dcd.py --input ../Logs-chig/chig-traj.traj --output test.dcd --pdb ../chig_preprocessed/chig-preeq.pdb --stride 1
+
+# Then load the static PBD first in pymol, then load the dcd file in pymol
