@@ -1,4 +1,4 @@
-# `ana_chikaterasu.sh` — Automated MD Analysis for CHIKATERASU
+# `ana_chikaterasu.sh` — Automated MD Analysis for MD runs initiated by Chikaterasu
 
 This bash script automates post-processing of molecular dynamics (MD) simulation results. 
 It is meant to simplify the typical workflow after running simulations with GROMACS.
