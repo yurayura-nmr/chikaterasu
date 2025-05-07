@@ -7,6 +7,8 @@ gmx convert-tpr -s md.tpr -extend 0 -o md_continued.tpr
 # To extend the simulation, specify the desired duration in picoseconds.
 # For example, to extend by 100 nanoseconds (100,000 ps):
 # gmx convert-tpr -s md.tpr -extend 100000 -o md_continued.tpr
+# For example, to extend a 100 ns simulation to 1 us:
+# gmx convert-tpr -s md.tpr -extend 900000 -o md_continued.tpr
 
 # Resume the MD run using checkpoint data, enabling GPU acceleration where applicable.
 gmx mdrun -s md_continued.tpr -cpi md.cpt -deffnm md -nb gpu
