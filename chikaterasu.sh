@@ -70,6 +70,7 @@ protein_with_small_molecules=false
 protein_added_small_molecule_name="ATP"  # Name of the small molecule to be inserted alongside the protein (file must be in the gromacs/coord directory)
 
 # Specify box configuration options
+amber=false                 # For N-/C-terminus. False for CHARMM36m etc.
 box_manual=false            # Enable manual specification of the box size
 box_empty=false             # Set to true for a water-only simulation (no solute)
 
@@ -160,7 +161,12 @@ if [ "$insert_small_molecules" = false ] ; then
 
     if [ "$his_manual" = false ] ; then
         if [ "$disulfide" = false ] ; then
-            gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
+            if [ "$amber" = true ] ; then
+                gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
+            fi
+            if [ "$amber" = false ] ; then
+                gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive -ter
+            fi
         fi
         if [ "$disulfide" = true ] ; then
           gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive -ss
