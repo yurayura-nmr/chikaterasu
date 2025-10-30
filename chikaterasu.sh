@@ -80,12 +80,14 @@ box_empty=false             # Set to true for a water-only simulation (no solute
 box_dim="    7.845   6.497   6.363 "  
 cell_shape="triclinic"      # Available shapes: triclinic, cubic, dodecahedron, octahedron
 
-# Water model selection
-water="tip4p"               #  Available options: spce, spc, tip3p, tip4p, tip5p, ... (for tip4p2005, use tip4p and replace itp file)
-water_file="tip4p.gro"      # Corresponding water model structure file (default is tip4p.gro)
-
-# NOTE: For rheological molecular dynamics (rheoMD) simulations, use SPCE water ["spce" / "spc216.gro"].
-# TIP4P water is known to cause instability and simulation blowup in these scenarios.
+# --- Water Model Configuration ---
+# Specify the water model to be used in the simulation.
+# Available options: spce, spc, tip3p, tip4p, tip5p, ...
+# (For TIP4P-2005, set `water="tip4p"` and manually replace the corresponding .itp file.)
+# Note: For rheological MD (rheoMD) simulations, use the SPCE water model ("spce" / "spc216.gro").
+# TIP4P-based models are known to exhibit instability and may lead to simulation crashes under shear conditions.
+water="tip4p"      
+water_file="tip4p.gro"
 
 : '
 *************************************************************
@@ -410,15 +412,18 @@ do
             exit 1
         fi
 
-        printf "Temperature" | gmx energy -f npt.edr -o ./temperature.xvg
-        printf "Density" | gmx energy -f npt.edr -o ./density.xvg
+        # Diagnostics: The following commands are disabled by default and can be uncommented to
+        # extract additional thermodynamic and box-condition metrics when needed (for example, if
+        # variation in temperature, pressure or box dimensions must be verified).
+        #printf "Temperature" | gmx energy -f npt.edr -o ./temperature.xvg
+        #printf "Density" | gmx energy -f npt.edr -o ./density.xvg
         #printf "Pres-XX" | gmx energy -f npt.edr -o ./pressure_XX.xvg
         #printf "Pres-YY" | gmx energy -f npt.edr -o ./pressure_YY.xvg
         #printf "Pres-ZZ" | gmx energy -f npt.edr -o ./pressure_ZZ.xvg
         #printf "Box-XX" | gmx energy -f npt.edr -o ./box_XX.xvg
         #printf "Box-YY" | gmx energy -f npt.edr -o ./box_YY.xvg
         #printf "Box-ZZ" | gmx energy -f npt.edr -o ./box_ZZ.xvg
-        printf "Volume" | gmx energy -f npt.edr -o ./volume.xvg
+        #printf "Volume" | gmx energy -f npt.edr -o ./volume.xvg
         #printf "Pres-XY" | gmx energy -f npt.edr -o ./pressure_XY.xvg
         #printf "Pres-XZ" | gmx energy -f npt.edr -o ./pressure_XZ.xvg
         #printf "Pres-YX" | gmx energy -f npt.edr -o ./pressure_YX.xvg
@@ -435,23 +440,31 @@ do
 
         gmx grompp -f ./md.mdp -c ../npt/npt.gro -t ../npt/npt.cpt -p ../../gromacs/top/topol.top -o md.tpr -maxwarn 1
 
-        #gmx editconf -f md.tpr -o system_before_md.pdb  # moved here and commented out for now (2025/1) since not really used
-        #gmx editconf -f md.tpr -o md.gro                # moved here and commented out for now (2025/1) since not really used
-        
-        # Note (added 20220509): when using mdrun deform option for rheo. MD, a bug seems to exist somehow.
-        # Thread-MPI optimization somehow does not work; however, if the next line is changed to ... it works! (no optimization though?)
-        # gmx mdrun -deffnm md -ntmpi 1 -v
+        # Optional: Use the following commands only if you need to manually inspect the simulation box or setup
+        # before starting the production run. These steps are not required under normal conditions.
+        # (Temporarily disabled, since routine runs do not require manual verification.)
+        # gmx editconf -f md.tpr -o system_before_md.pdb
+        # gmx editconf -f md.tpr -o md.gro
+
+        # Note (2022-05-09): When running rheological (shear-flow) MD simulations using the `mdrun -deform` option,
+        # certain systems may exhibit issues with Thread-MPI optimization. In such cases, using the fallback command
+        # below resolves the problem, though it disables multi-thread optimization:
+        #   gmx mdrun -deffnm md -ntmpi 1 -v
+        # For most modern hardware, the standard command works as expected.
         gmx mdrun -deffnm md -nb gpu -v
 
-        printf "Temperature" | gmx energy -f md.edr -o ./temperature.xvg
-        printf "Density" | gmx energy -f md.edr -o ./density.xvg
+        # Diagnostics: The following commands are disabled by default and can be uncommented to
+        # extract additional thermodynamic and box-condition metrics when needed (for example, if
+        # variation in temperature, pressure or box dimensions must be verified).
+        #printf "Temperature" | gmx energy -f md.edr -o ./temperature.xvg
+        #printf "Density" | gmx energy -f md.edr -o ./density.xvg
         #printf "Pres-XX" | gmx energy -f md.edr -o ./pressure_XX.xvg
         #printf "Pres-YY" | gmx energy -f md.edr -o ./pressure_YY.xvg
         #printf "Pres-ZZ" | gmx energy -f md.edr -o ./pressure_ZZ.xvg
         #printf "Box-XX" | gmx energy -f md.edr -o ./box_XX.xvg
         #printf "Box-YY" | gmx energy -f md.edr -o ./box_YY.xvg
         #printf "Box-ZZ" | gmx energy -f md.edr -o ./box_ZZ.xvg
-        printf "Volume" | gmx energy -f md.edr -o ./volume.xvg
+        #printf "Volume" | gmx energy -f md.edr -o ./volume.xvg
         #printf "Pres-XY" | gmx energy -f md.edr -o ./pressure_XY.xvg
         #printf "Pres-XZ" | gmx energy -f md.edr -o ./pressure_XZ.xvg
         #printf "Pres-YX" | gmx energy -f md.edr -o ./pressure_YX.xvg
