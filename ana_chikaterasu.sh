@@ -348,8 +348,8 @@ do
   And then check by if statements, which one to do
   *************************************************************
   '
-  printf "\n**************** Hydrogen Bonding Analysis ***************\n\n"
   if [ "$hbond" = true ] ; then
+       printf "\n**************** Hydrogen Bonding Analysis ***************\n\n"
       cd hbond
       printf "MainChain+H\nMainChain+H" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn hbond.ndx -num backbone_backbone.xvg -dt $dt
       
