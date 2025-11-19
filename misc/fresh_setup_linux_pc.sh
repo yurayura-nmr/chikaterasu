@@ -65,7 +65,7 @@ mkdir -p ~/chikaterasu/setup
 cd ~/chikaterasu/setup
 
 # Download and build GROMACS
-wget https://ftp.gromacs.org/gromacs/gromacs-2022.2.tar.gz
+wget https://ftp.gromacs.org/gromacs/gromacs-2022.3.tar.gz
 tar xvf gromacs-2022.2.tar.gz
 cd gromacs-2022.2
 
