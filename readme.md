@@ -1,5 +1,7 @@
 # Chikaterasu
 
+**C**ommand-line **H**elper for **I**nstalling **K**ernel-**A**ccelerated **T**hermodynamic **E**xploration **R**uns **A**nd **S**etting **U**p
+
 <img src="logo.png" alt="Chikaterasu logo" align="right" />
 
 Chikaterasu is a Bash script designed to automate the setup of multiple identical molecular dynamics (MD) simulations. 
