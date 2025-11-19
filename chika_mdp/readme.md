@@ -71,17 +71,19 @@ the default output frequency can generate massive files and wear down storage de
 **Recommended high-frequency output settings:**
 
 ```ini
-nstxout               = 1000000
-nstvout               = 1000000
-nstenergy             = 1000000
-nstlog                = 1000000
-nstxout-compressed    = 1000000
+nstxout               = 5000000
+nstvout               = 5000000
+nstenergy             = 5000000
+nstlog                = 5000000
+nstxout-compressed    = 5000000
 ```
 
-At 2 fs time step, this saves frames every **~2 ns**, drastically reducing output size:
+At 2 fs time step, this saves frames every **~10 ns**, drastically reducing output size:
 
-* A small system typically produces **≈2.7 GB per 2 ns** at high frequency.
-* With coarse output (1M-step intervals), even **multi-microsecond simulations** remain practical in size.
+* A small system typically produces **≈2.5 GB per 1 us** at high frequency.
+* With coarse output (5M-step intervals), even **multi-microsecond simulations** remain practical in size.
+* It still produces 10 data points every 100 ns, so large-scale domain-domain motion dynamics should be somewhat covered.
+* It will produce poor RMSD/RMSF/distance etc. statistics though.
 
 ---
 
