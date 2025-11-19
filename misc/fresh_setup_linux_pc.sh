@@ -69,9 +69,9 @@ cd ~/chikaterasu/setup
 # However, newer GROMACS versions often require a recent CMake version that may
 # not be available via system package managers (apt-get). If the build fails,
 # you may need to manually build and install a newer CMake version first.
-wget https://ftp.gromacs.org/gromacs/gromacs-2022.3.tar.gz
-tar xvf gromacs-2022.3.tar.gz
-cd gromacs-2022.3
+wget https://ftp.gromacs.org/gromacs/gromacs-2025.3.tar.gz
+tar xvf gromacs-2025.3.tar.gz
+cd gromacs-2025.3
 
 mkdir build
 cd build
