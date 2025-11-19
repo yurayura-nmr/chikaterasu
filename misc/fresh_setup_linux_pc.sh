@@ -78,6 +78,17 @@ cmake .. \
     -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda \
     -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs
 
+# Note: If the downloaded regression test version differs significantly from your
+# GROMACS version, some tests may fail. In that case, manually download the 
+# regression tests that match your GROMACS version, extract the tarball, and use:
+#
+# cmake .. \
+#     -DREGRESSIONTEST_DOWNLOAD=OFF \
+#     -DREGRESSIONTEST_PATH=/path/to/regressiontests-xxxx \
+#     -DGMX_GPU=CUDA \
+#     -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda \
+#     -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs
+
 make -j$(nproc)
 make check -j$(nproc)
 sudo make install
