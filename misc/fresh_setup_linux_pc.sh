@@ -65,9 +65,13 @@ mkdir -p ~/chikaterasu/setup
 cd ~/chikaterasu/setup
 
 # Download and build GROMACS
+# Note: Use the highest/newest GROMACS version compatible with your hardware.
+# However, newer GROMACS versions often require a recent CMake version that may
+# not be available via system package managers (apt-get). If the build fails,
+# you may need to manually build and install a newer CMake version first.
 wget https://ftp.gromacs.org/gromacs/gromacs-2022.3.tar.gz
-tar xvf gromacs-2022.2.tar.gz
-cd gromacs-2022.2
+tar xvf gromacs-2022.3.tar.gz
+cd gromacs-2022.3
 
 mkdir build
 cd build
