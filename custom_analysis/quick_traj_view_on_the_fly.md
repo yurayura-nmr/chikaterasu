@@ -23,9 +23,7 @@ Then open the link printed in the terminal (usually `http://localhost:8888/lab`)
 Create a new notebook in Jupyter Lab and run the following:
 
 ```python
-import MDAnalysis as mda
-import nglview as nv
-import numpy as np
+import MDAnalysis as mda, nglview as nv, numpy as np
 
 u = mda.Universe("../md_target.tpr", "../md_target_centered_no_PBC.xtc")
 
