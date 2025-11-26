@@ -13,7 +13,7 @@ From your trajectory directory:
 # Install required dependencies
 pip install mdanalysis nglview numpy
 
-cd results/md_1/traj
+# In Chikaterasu directory
 jupyter lab
 ````
 
@@ -28,7 +28,7 @@ Create a new notebook in Jupyter Lab and run the following:
 ```python
 import MDAnalysis as mda, nglview as nv, numpy as np
 
-u = mda.Universe("../md_target.tpr", "../md_target_centered_no_PBC.xtc")
+u = mda.Universe("results/md_1/md_target.tpr", "results/md_1/md_target_centered_no_PBC.xtc")
 
 # Load trajectory into memory (optional but speeds up playback)
 u.transfer_to_memory(step=5)
@@ -58,7 +58,7 @@ This will open an interactive NGL viewer inside the notebook, showing your traje
 ```python
 import MDAnalysis as mda, nglview as nv, numpy as np
 
-u = mda.Universe("../md.tpr", "../md_full.xtc")
+u = mda.Universe("results/md_1/md.tpr", "results/md_1/md_full.xtc")
 
 # Load trajectory into memory (optional but speeds up playback)
 u.transfer_to_memory(step=10)
