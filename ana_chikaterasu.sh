@@ -404,7 +404,9 @@ do
   *************************************************************
   Radius of gyration
   *************************************************************
-  '
+  '  
+  printf "\n************** Gyration Analysis *************\n\n"
+  
   if [ "$gyration" = true ] ; then
       if [ "$dna" = false ] ; then
           printf "Protein\n" | gmx gyrate -s md_target.tpr -f md_fit.xtc -o gyration/gyr.xvg -b $anatime
