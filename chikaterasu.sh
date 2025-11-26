@@ -3,7 +3,7 @@
 : '
 *************************************************************
 Chikaterasu         Version: dev
-gmx                 Version: 2022.3
+gmx                 Version: 2025.3
 
 For recent changes or issues, please refer to the GitHub repository.
 
