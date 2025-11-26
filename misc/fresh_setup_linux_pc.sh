@@ -61,6 +61,16 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 # ---------------------------------------------------------------------------
 echo "5. Building and installing GROMACS..."
 
+# Note: GROMACS 2025.3 requires CMake 4.0 or newer
+# This was confirmed to work with the Chikaterasu repository
+# If CMake is not already installed, you can easily install it with:
+#   wget https://github.com/Kitware/CMake/releases/download/v4.2.0/cmake-4.2.0.tar.gz
+#   tar xvf cmake-4.2.0.tar.gz
+#   cd cmake-4.2.0
+#   ./configure
+#   make -j$(nproc)
+#   sudo make install
+
 mkdir -p ~/chikaterasu/setup
 cd ~/chikaterasu/setup
 
