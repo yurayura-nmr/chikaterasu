@@ -50,6 +50,39 @@ This will open an interactive NGL viewer inside the notebook, showing your traje
 
 ---
 
+## 3. Minimal Notebook to Visualize Your Trajectory with Water Displayed
+
+```python
+import MDAnalysis as mda, nglview as nv, numpy as np
+
+u = mda.Universe("../md.tpr", "../md_full.xtc")
+
+# Load trajectory into memory (optional but speeds up playback)
+u.transfer_to_memory(step=10)
+
+# Create viewer
+view = nv.show_mdanalysis(u)
+
+# Add unit cell display
+view.add_unitcell()
+
+# Apply rotation (example from MDAnalysis tutorial)
+view.control.rotate(mda.lib.transformations.quaternion_from_euler(-np.pi/2, np.pi/3, np.pi/6, 'rzyz').tolist())
+
+# Show water atoms
+view.add_representation("spacefill", selection="water", radius=0.2, opacity=0.3, color="skyblue")
+
+# Zoom out slightly
+view.control.zoom(-0.3)
+
+# Display widget (must be last line of cell)
+view
+```
+
+This will open an interactive NGL viewer inside the notebook, showing your trajectory with PBC box and rotation applied.
+
+---
+
 ## Notes
 
 * `u.transfer_to_memory(step=5)` reduces trajectory size and speeds up visualization.
