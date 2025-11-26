@@ -1,4 +1,3 @@
-````markdown
 # MDAnalysis + NGLView Quick Visualization Tutorial
 
 This short guide shows how to quickly launch a Jupyter Lab session and visualize an MD trajectory using **MDAnalysis** and **nglview**.  
@@ -58,8 +57,3 @@ This will open an interactive NGL viewer inside the notebook, showing your traje
 * `u.transfer_to_memory(step=5)` reduces trajectory size and speeds up visualization.
 * The orientation and zoom can be adjusted interactively in the widget.
 * Use `view.add_representation("cartoon")`, `view.add_surface()`, etc. for more display styles.
-
----
-
-```
-```
