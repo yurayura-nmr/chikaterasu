@@ -10,6 +10,9 @@ Useful for rapid trajectory inspection and generating interactive molecular view
 From your trajectory directory:
 
 ```bash
+# Install required dependencies
+pip install mdanalysis nglview numpy
+
 cd results/md_1/traj
 jupyter lab
 ````
