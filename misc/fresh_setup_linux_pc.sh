@@ -39,6 +39,7 @@ sudo apt-get install -y libopenmpi-dev
 sudo apt-get install -y vim
 sudo apt-get install -y cmake
 sudo apt-get install -y wget
+sudo apt-get install -y grace # displaying gromacs output xvg
 
 # ---------------------------------------------------------------------------
 # CUDA Toolkit Installation
