@@ -57,3 +57,4 @@ This will open an interactive NGL viewer inside the notebook, showing your traje
 * `u.transfer_to_memory(step=5)` reduces trajectory size and speeds up visualization.
 * The orientation and zoom can be adjusted interactively in the widget.
 * Use `view.add_representation("cartoon")`, `view.add_surface()`, etc. for more display styles.
+* For water and ions displayed: `u = mda.Universe("../md.tpr", "../md_full.xtc")`
