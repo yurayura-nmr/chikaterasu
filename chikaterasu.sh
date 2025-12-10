@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 : '
 *************************************************************
@@ -318,7 +318,6 @@ and hydrogen addition.
 *************************************************************
 '
 
-# UNTESTED --- Distance restraints (generic DISRES mechanism) --- UNTESTED
 if [ "$enable_disres" = true ] ; then
     cd gromacs/top
     cp ../../distance_restraints.itp ./
@@ -341,7 +340,6 @@ if [ "$enable_disres" = true ] ; then
     read -p "[Chikaterasu] DISRES is ON. Continue?" dummy
 fi
 
-# UNTESTED --- Metal coordination bonds (Zn2+–protein or other metal–ligand bonds) --- UNTESTED
 if [ "$enable_metal_bonds" = true ] ; then
     if [[ ! -f ./zn_bond.top ]] ; then
         echo "[Chikaterasu] ERROR: zn_bond.top not found in base directory."
