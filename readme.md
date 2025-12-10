@@ -58,60 +58,74 @@ sh chikaterasu.sh 2
 sh chikaterasu.sh 0
 ```
 
-## Special bonds
-
-### Metal coordination
-
-Coordination bonds are formed between Lewis acids (e.g., Zn2+) and Lewis bases (e.g., thiol groups R-S-H or R-S(-)). Lone pair electrons on S atom to Zn2+ d-orbital.
-
-The example here is written for the case of Zn2+ ions bound to a protein in the input PDB file. Similar steps should work for other ions (Ca2+, Mg2+, etc.).
-
-Choose 2 coordinating Cys residues and define them as CYM (instead of CYS) in the PDB file to ensure local charge neutrality (Zn2+ + Cym- + Cym-). For this example, let us assume that CYS residues Cys197 and Cys214 were chosen as CYM residues. Cys200 and Cys211 are chosen as regular CYS residues.
-
-Now we need the topology:
-
-```bash
-./chikaterasu.sh 1   # this should run normally
-```
-
-Now the topology is already accessible in `gromacs/top`. We can see the atom numbers as defined by GROMACS (not the PDB file). Find the atom number of the Zn2+ ion and note it down (let's say, it is 3358). This will be used soon.
-Also find the atom numbers of all the coordinating (e.g., S-gamma atoms of Cys residues. Let us say for this example, they are 2564, 2595, 2768, and 2811.
-
-In the chikaterasu base folder, provide an additional file containing the distance restraints for the Zn2+ ion (e.g., to coordinating His or Cys residues). As an example `distance_restraints.itp` file:
-
-```
-#ifdef DISRES
-[ distance_restraints ]
-; ai aj type index type' low up1 up2 fac
-  2564 3358   1   1     1     0.0 0.23 0.3 1      ; CYM197 SG <> Zn2+
-  2595 3358   1   2     1     0.0 0.23 0.3 1      ; CYS200 SG <> Zn2+  
-  2768 3358   1   3     1     0.0 0.23 0.3 1      ; CYS211 SG <> Zn2+
-  2811 3358   1   4     1     0.0 0.23 0.3 1      ; CYM214 SG <> Zn2+
-#endif
-```
-
-Next, in `chikaterasu.sh`, set the distance restraints flag to true:
-
-```bash
-distance_restratints=true
-```
-
-Finally, we need some Zn2+-protein bonds. Make another file called "metal_protein_bonds.top" or something like that:
-
-```
-2564  3358     6 0.24  4000    ; 16 CYS-SG G-C-T
-2595  3358     6 0.24  4000    ; 13 CYS-SG Q-C-P
-2768  3358     6 0.24  4000    ; 27 CYS-SG G-C-E
-2811  3358     6 0.24  4000    ; 30 CYS-SG G-C-C
-```
-
-Now, unfortunately, this file (containing the coordination bonds between the Zn2+ atom and Cys S-gamma atoms) is not yet automatically integrated into final topology file `topol.top`.
-
-At present, Chikaterasu will pause once to give the user the chance to ninja-edit the `topol.top` by adding these special bonds, right before going to energy minimization. (i.e., just copy paste these 4 lines into `topol.top`).
-
-In the future, this will be automated so that the `metal_protein_bonds.top` file is read automatically into `topol.top` and this user-invention is not required.
-
 ## Modelling missing loops in the structure
 
 For loop modeling, use UCSF's ModLoop service with your modified PDB file to define loop segments (e.g., 70:A:71:A).
 Alternatives are SwissModel, AlphaFold, PyMOL etc.
+
+Here is a streamlined, clearer version that keeps the important mechanics but removes the unnecessary complication with distance restraints—while still noting that they *can* be used but are **not required** if the bonds are defined.
+
+I’ve also woven in the explanation you discovered experimentally (Zn stays coordinated even when `DISRES` is off) so the text reads naturally and consistently.
+
+---
+
+## Special bonds
+
+### Metal coordination
+
+Metal coordination involves forming partially covalent interactions between Lewis acids such as Zn²⁺ and Lewis bases such as the thiolate groups of cysteine residues. 
+The lone pair on sulfur interacts strongly with the metal center, and in practice this interaction is stiff enough that it behaves like a short bond during MD.
+
+The example below describes how to introduce a tetrahedrally coordinated Zn²⁺ ion in the protein. 
+Although this example uses Zn²⁺ and cysteines, the same approach applies to other divalent ions (e.g., Ca²⁺, Mg²⁺) and their coordinating residues.
+
+First, choose the cysteine residues that will coordinate the Zn²⁺ ion and define the deprotonated ones as **CYM** in the PDB file. 
+A typical Zn²⁺ site uses two CYM residues (anionic thiolates) for charge balance, together with two neutral CYS residues.
+For this example, let us assume:
+
+* CYM: Cys197, Cys214
+* CYS: Cys200, Cys211
+
+Run:
+
+```bash
+./chikaterasu.sh 1
+```
+
+The generated topology is placed in `gromacs/top`. From there, identify:
+
+* the atom index of the Zn²⁺ ion (e.g., 3358), and
+* the Sγ atoms of the four coordinating cysteine residues (e.g., 2564, 2595, 2768, 2811).
+
+These numbers are used to define the metal–ligand bonds.
+
+### Coordination bonds
+
+In this workflow, **the coordination geometry is enforced by explicit bonds**, not distance restraints. 
+Our tests show that Zn²⁺ stays stably coordinated even if the `DISRES` flag is absent, because these covalent-style bonds dominate the interaction.
+
+Create a file called `zn_bond.top` containing the Zn–Sγ bonds:
+
+```
+2564  3358     6 0.24  4000    ; CYM197 SG
+2595  3358     6 0.24  4000    ; CYS200 SG
+2768  3358     6 0.24  4000    ; CYS211 SG
+2811  3358     6 0.24  4000    ; CYM214 SG
+```
+
+These use a stiff harmonic bond (type 6) at 0.24 nm, which reliably holds the Zn²⁺ coordination sphere together.
+
+Chikaterasu automatically inserts `zn_bond.top` into the final `topol.top` right before the `[ pairs ]` section, so no manual editing is needed.
+
+### Optional distance restraints
+
+Distance restraints can still be added for experiments or for enforcing a particular coordination geometry, but they are **not required** for stability when these bonds are defined. 
+If you choose to use them, place them in `distance_restraints.itp` and enable them with `define = -DDISRES` in your `md.mdp` file. 
+Otherwise, they are simply ignored.
+
+Chikaterasu prints reminder messages indicating whether:
+
+* `-DDISRES` is present in the MDP (if you intend to use restraints), and
+* the Zn²⁺–protein bonds are correctly included in the final topology.
+
+Future updates will expand these checks, but the core metal-coordination topology is now fully automated.
