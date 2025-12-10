@@ -38,7 +38,8 @@ debug_level=0               # Set the debug level for output verbosity. Can be p
 
 # === Histidine Protonation and Zn2+ Options ===
 his_manual=false            # Manually specify histidine protonation states (set to true if required).
-distance_restraints=false   # Enable distance restraints, typically used for Zn2+ interactions.
+enable_disres=false         # For generic DISRES-based restraints
+enable_metal_bonds=false    # For adding zn_bond.top entries
 disulfide=false             # Specify whether to account for disulfide bridges during topology generation.
 
 
@@ -288,66 +289,73 @@ fi
 
 : '
 *************************************************************
-Add distance restraints
-e.g. Zn2+ and other ligands or to fix one domain on a
-     receptor etc.
+Optional distance restraints
 
-Requires that the file "distance_restraints.itp" is prepared
-and in the main directory of this MD simulation
+Distance restraints can be used to guide specific atom–atom
+distances (e.g., to maintain a known coordination geometry,
+keep two domains near each other, or restrain a ligand).
 
-Make sure that chika_mdp files are correctly set up:
+They are *not required* for metal coordination if explicit
+bonds (e.g., Zn–Sγ) are defined. Zn sites remain stable even
+without DISRES.
 
-NVT
-define  = -DPOSRES -DDISRES     ; position restrain the protein
-disre   = simple                ; Enable Distance Restraints
+To enable restraints:
+1. Prepare "distance_restraints.itp"
+2. Set distance_restraints=true in chikaterasu.sh
+3. Ensure the chika_mdp files contain:
 
-NPT
-define  = -DPOSRES -DDISRES     ; position restrain the protein
-disre   = simple                ; Enable Distance Restraints
+NVT / NPT:
+    define = -DPOSRES -DDISRES
+    disre  = simple
 
-MD
+MD:
+    define = -DDISRES
+    disre  = simple
 
-define  = -DDISRES              ; only distance restrains left
-disre   = simple                ; Enable Distance Restraints
-
-Make sure that numbers in distance restraint file match
-the topology numbers even after hydrogens are added and 
-CYS is converted to CYM etc.
+Always verify that atom indices in distance_restraints.itp
+match the final topology after protonation, CYM conversion,
+and hydrogen addition.
 *************************************************************
 '
 
-if [ "$distance_restraints" = true ] ; then
+# UNTESTED --- Distance restraints (generic DISRES mechanism) --- UNTESTED
+if [ "$enable_disres" = true ] ; then
     cd gromacs/top
     cp ../../distance_restraints.itp ./
 
-    # untested addition
     if [[ ! -f ./distance_restraints.itp ]] ; then
-      echo "[Chikaterasu-dev] File distance_restraints.itp is not there, aborting."
-      exit 1
+        echo "[Chikaterasu] ERROR: distance_restraints.itp not found."
+        exit 1
     fi
 
-    # Add the include statement to the toplogy file [topol.top]
-    #; Include distance restraints
-    #ifdef DISRES
-    #include "./distance_restraints.itp"
-    #endif
-
+    # Insert DISRES include block
     sed -i '/Include Position restraint file/a ; Include distance restraints\n#ifdef DISRES\n#include "./distance_restraints.itp"\n#endif\n; Include Position restraint file' topol.top
 
     cd ../..
 
-    #exit 1
+    echo "[Chikaterasu] Added distance_restraints.itp to topol.top (wrapped in #ifdef DISRES)."
+    echo "[Chikaterasu] Reminder: DISRES restraints only apply if your MDP includes:"
+    echo "              define = -DDISRES"
+    echo "[Chikaterasu] Make sure atom indices in distance_restraints.itp match the final topology."
 
-    echo "[Chikaterasu-dev] Added distance restraints to topology file."
-    echo "[Chikaterasu-dev] Make sure mdp file md.mdp also contains define -DDISRES . Otherwise the distance restraints are ignored even though we included them in the topology."
-    echo "[Chikaterasu-dev] Make sure the topology file is correct."
-    echo "[Chikaterasu-dev] e.g., if using Zn2+ ion, confirm the topol.top now to make sure the correct protein-Zn2+ bonds have been added to the [bonds] and before the [pairs] section."
+    read -p "[Chikaterasu] DISRES is ON. Continue?" dummy
+fi
 
+# UNTESTED --- Metal coordination bonds (Zn2+–protein or other metal–ligand bonds) --- UNTESTED
+if [ "$enable_metal_bonds" = true ] ; then
+    if [[ ! -f ./zn_bond.top ]] ; then
+        echo "[Chikaterasu] ERROR: zn_bond.top not found in base directory."
+        exit 1
+    fi
+
+    # Insert the metal–protein bond definitions before [ pairs ]
     sed -i "/\[ pairs ]/i $(sed ':a;N;$!ba;s/\n/\\n/g' zn_bond.top)" gromacs/top/topol.top
 
-    read -p "[Chikaterasu-dev] Distance restraints are ON. zn_bond.top has been appended to the topology. Continue?" dummy
+    echo "[Chikaterasu] Metal coordination bonds appended to topol.top (via zn_bond.top)."
+    echo "[Chikaterasu] These are *explicit bonded interactions* and do not require DISRES."
+    echo "[Chikaterasu] Verify bond lengths and force constants if using ions other than Zn2+."
 
-
+    read -p "[Chikaterasu] Metal coordination bonds inserted. Continue?" dummy
 fi
 
 : '
