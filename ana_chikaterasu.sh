@@ -56,7 +56,7 @@ paxis=false         # Use gromacs to calculate principal axis. This can flip the
 signedPaxis=false   # Do we want to get the signed vector of the principal axis? Requires helper script [chika_paxis.py] 
 
 dssp=false
-
+indexFileProvided=false  # Are you providing a file with the atom numbers for analysis? [chika.ndx]
 
 : '
 *************************************************************
@@ -73,7 +73,6 @@ For example, to get RMSD or RMSF of a single domain, use gmx make_ndx to extra
 C-alpha atoms for a given region and save the resulting index.ndx as chika.ndx
 *************************************************************
 '
-indexFileProvided=false     
 nchains=3                   # number of chains in the chika.ndx file 
 
 
