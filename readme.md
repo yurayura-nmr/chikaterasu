@@ -58,3 +58,10 @@ sh chikaterasu.sh 2
 sh chikaterasu.sh 0
 ```
 
+
+## Documentation
+
+More detailed documentation, tutorials, and workflow explanations can be found in our GitHub Wiki:
+
+👉 https://github.com/yurayura-nmr/chikaterasu/wiki
+
