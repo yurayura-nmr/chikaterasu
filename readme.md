@@ -58,15 +58,6 @@ sh chikaterasu.sh 2
 sh chikaterasu.sh 0
 ```
 
-## Modelling missing loops in the structure
-
-For loop modeling, use UCSF's ModLoop service with your modified PDB file to define loop segments (e.g., 70:A:71:A).
-Alternatives are SwissModel, AlphaFold, PyMOL etc.
-
-Here is a streamlined, clearer version that keeps the important mechanics but removes the unnecessary complication with distance restraints—while still noting that they *can* be used but are **not required** if the bonds are defined.
-
-I’ve also woven in the explanation you discovered experimentally (Zn stays coordinated even when `DISRES` is off) so the text reads naturally and consistently.
-
 ---
 
 ## Special bonds
