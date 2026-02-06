@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# PC Setup Script for chikaterasu MD Analysis Repository [untested]
+# PC Setup Script for chikaterasu MD Analysis Repository
 # This script automates the initial setup of a new PC for molecular dynamics analysis
+# Last test: 2026/2/6 (PopOS 24)
 
 set -e  # Exit on any error
 
@@ -28,13 +29,13 @@ sudo apt-get upgrade -y
 # Essential Package Installation
 # ---------------------------------------------------------------------------
 echo "3. Installing essential packages..."
-sudo apt install -y plocate
+sudo apt-get install -y plocate
 sudo apt-get install -y ssh
 sudo apt-get install -y libssh-dev  # required for cmake
 sudo apt-get install -y htop
 sudo apt-get install -y libfftw3-dev # can also build from scratch 
 sudo apt-get install -y cmake-curses-gui
-sudo apt install -y libflame-dev # may be needed on some hardware 
+sudo apt-get install -y libflame-dev # may be needed on some hardware 
 sudo apt-get install -y libopenmpi-dev
 sudo apt-get install -y vim
 sudo apt-get install -y cmake
@@ -53,9 +54,12 @@ wget https://developer.download.nvidia.com/compute/cuda/12.8.0/local_installers/
 chmod +x cuda_12.8.0_570.86.10_linux.run
 sudo ./cuda_12.8.0_570.86.10_linux.run --toolkit --silent --override
 
-# Add CUDA to PATH (temporary for this session)
+# Add CUDA to PATH
+# also add these to the end of .bashrc
 export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+nvcc # make sure nvidia compiler is working
 
 # ---------------------------------------------------------------------------
 # GROMACS Installation
@@ -145,3 +149,6 @@ echo "Setup complete! Notes:"
 echo "- Manual steps: Disable display dimming and auto-suspend in PopOS GUI"
 echo "- Test ubiquitin with chikaterasu 5 to verify GPU functionality"
 echo "- You may need to restart your terminal for all paths to take effect"
+
+# Optionally, download and install miniconda, then:
+pip install mdanalysis
