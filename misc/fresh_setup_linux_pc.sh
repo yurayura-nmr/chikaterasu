@@ -54,8 +54,8 @@ wget https://developer.download.nvidia.com/compute/cuda/12.8.0/local_installers/
 chmod +x cuda_12.8.0_570.86.10_linux.run
 sudo ./cuda_12.8.0_570.86.10_linux.run --toolkit --silent --override
 
-# Add CUDA to PATH
-# also add these to the end of .bashrc
+# Add CUDA to PATH (for current session)
+# They will be added to .bashrc later in the script
 export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
