@@ -3,8 +3,8 @@ import MDAnalysis as mda
 from MDAnalysis.analysis import dihedrals
 
 u = mda.Universe(
-    "../md_target.tpr",
-    "../md_target_centered_no_PBC.xtc"
+    "results/md_1/md_target.tpr",
+    "results/md_1/md_target_centered_no_PBC.xtc"
 )
 
 # Residues of interest
