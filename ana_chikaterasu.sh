@@ -462,7 +462,7 @@ do
   *************************************************************
   '
   if [ "$sasa" = true ] ; then
-      printf "Protein\n" | gmx sasa -s md_target.tpr -f md_fit.xtc -or sasa/sasa.xvg -b $anatime 
+      printf "Protein\n" | gmx sasa -s md_target.tpr -f md_fit.xtc -or sasa/sasa_by_residue.xvg -oa sasa/sasa_by_atom.xvg -b $anatime 
   fi
   
   : '
