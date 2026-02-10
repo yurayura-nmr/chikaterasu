@@ -1,13 +1,5 @@
 # 🐳 Installing Docker + NVIDIA Container Toolkit (Pop!_OS / Ubuntu)
 
-This guide provides steps to install Docker along with the NVIDIA Container Toolkit to enable GPU-accelerated containers (e.g., for molecular dynamics simulations).
-
----
-
-## 📦 1. Install Docker Engine
-
-### Update packages and install Docker:
-
 ```bash
 sudo apt update
 sudo apt install docker.io -y
@@ -29,8 +21,6 @@ newgrp docker
 
 ---
 
-## 🖥️ 2. Verify NVIDIA Driver
-
 Make sure your system has the NVIDIA driver installed:
 
 ```bash
@@ -46,7 +36,7 @@ sudo reboot
 
 ---
 
-## ⚙️ 3. Install NVIDIA Container Toolkit
+## Install NVIDIA Container Toolkit
 
 ### Add the NVIDIA repository:
 
@@ -73,16 +63,8 @@ sudo systemctl restart docker
 
 ---
 
-## ✅ 4. Test GPU Access in Docker
-
 ```bash
 docker run --rm --gpus all nvidia/cuda:12.2.0-base-ubuntu20.04 nvidia-smi
 ```
 
-You should see your GPU listed just like on the host system.
-
-Next steps for visualizing the results.
-
-```bash
-sudo apt install pymol
-```
+To test the installation, run the example from: https://github.com/microsoft/AI2BMD
