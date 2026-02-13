@@ -1,7 +1,3 @@
-Here is your updated, clean, GitHub-ready section for **Step 1: Preparing the Input PDB in PyMOL**.
-
----
-
 # Step 1 — Preparing the Input PDB (PyMOL Preprocessing)
 
 Before running **AI2BMD**, the input structure should:
