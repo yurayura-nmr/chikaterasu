@@ -34,11 +34,7 @@ For easier visualization in PyMOL and compatibility with many MD tools, convert 
 Example:
 
 ```bash
-python3 traj2dcd.py \
-    --input ../Logs-chig/chig-traj.traj \
-    --output test.dcd \
-    --pdb ../chig_preprocessed/chig-preeq.pdb \
-    --stride 1
+python traj2dcd.py --input ../../Logs-ub/ub-traj.traj --output test.dcd --pdb ../../ub_preprocessed/ub-preeq.pdb --stride 1
 ```
 
 ### Argument Explanation
