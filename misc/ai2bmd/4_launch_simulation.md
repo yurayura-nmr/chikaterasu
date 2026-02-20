@@ -60,9 +60,16 @@ Use this to:
 
 ## Production Run (≈ 10 ns)
 
-Once the short test run succeeds, launch a longer simulation:
+Once the short test run succeeds, launch a longer simulation (may need to increase RAM or swap for longer runs):
 
 ```bash
+# Optional
+
+sudo fallocate -l 32G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
 ./ai2bmd \
   --prot-file ub.pdb \
   --preprocess-dir ub_preprocessed \
