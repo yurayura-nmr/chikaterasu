@@ -68,7 +68,4 @@ gen_vel			= no  ; Velocity generation is off since we are restarting after NPT
 ; Flow
 ; velocity [nm/ps]
 deform          = 0 0 0 0 0 0.01
-
-; Electric field
-; Magnitude [V/nm]
-;electric-field-x = 0.01 0 0 0
+deform-init-flow = yes  ; for new gromacs versions. See also issue gromacs#4607
