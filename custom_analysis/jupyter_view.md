@@ -5,6 +5,7 @@ Useful for rapid trajectory inspection and generating interactive molecular view
 Install dependencies:
 
 ```bash
+conda install -c conda-forge nodejs
 pip install nglview jupyterlab mdanalysis
 ````
 
