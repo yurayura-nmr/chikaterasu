@@ -67,5 +67,6 @@ gen_vel			= no  ; Velocity generation is off since we are restarting after NPT
 
 ; Flow
 ; velocity [nm/ps]
+; NOTE spce water appears the most stable for shear-simulations. Remember to set it in chikaterasu.sh.
 deform          = 0 0 0 0 0 0.01
 deform-init-flow = yes  ; for new gromacs versions. See also issue gromacs#4607
