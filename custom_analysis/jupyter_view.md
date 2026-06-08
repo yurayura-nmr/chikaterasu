@@ -2,6 +2,11 @@
 
 This short guide shows how to quickly launch a Jupyter Lab session and visualize an MD trajectory using **MDAnalysis** and **nglview**.  
 Useful for rapid trajectory inspection and generating interactive molecular views.
+Install dependencies:
+
+```bash
+pip install nglview jupyterlab mdanalysis
+````
 
 ---
 
