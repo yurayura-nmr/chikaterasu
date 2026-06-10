@@ -17,6 +17,10 @@
 #include <QButtonGroup>
 #include <QStackedWidget>
 #include <QSettings>
+#include <QProgressBar>
+#include <QTimer>
+#include <QSpinBox>
+#include <QScrollArea>
 
 class MainWindow : public QMainWindow
 {
@@ -31,6 +35,7 @@ private slots:
     void onBrowseScript();
     void onProcessOutput();
     void onProcessFinished(int exitCode);
+    void onCheckMdLog();
 
 private:
     void setupUI();
@@ -42,7 +47,7 @@ private:
 
     // --- Simulation parameters ---
     QLineEdit *m_proteinNameEdit;
-    QDoubleSpinBox *m_temperatureSpin; // K    
+    QDoubleSpinBox *m_temperatureSpin; // K
     QDoubleSpinBox *m_simTimeSpin;     // ns
     QComboBox *m_debugLevelCombo;      // int
     QCheckBox *m_hisManualCheck;       // yes/no
@@ -62,6 +67,12 @@ private:
     // Run control
     QPushButton *m_runButton;
     QPushButton *m_browseButton;
+
+    // Progress
+    QProgressBar *m_progressBar;
+    QTimer *m_logWatcher;
+    QString m_mdLogPath;
+    int m_totalSteps;
 
     // Output log
     QTextEdit *m_logOutput;

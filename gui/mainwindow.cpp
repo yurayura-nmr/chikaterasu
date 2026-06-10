@@ -99,6 +99,38 @@ QTextEdit {
 QFrame#divider {
     color: #2d3748;
 }
+QProgressBar {
+    background: #1a202c;
+    border: 1px solid #2d3748;
+    border-radius: 5px;
+    color: #e2e8f0;
+    text-align: center;
+    font-size: 12px;
+    min-height: 22px;
+}
+QProgressBar::chunk {
+    background: #3182ce;
+    border-radius: 4px;
+}
+    QScrollArea {
+    background: #0f1117;
+}
+QScrollBar:vertical {
+    background: #1a202c;
+    width: 8px;
+    border-radius: 4px;
+}
+QScrollBar::handle:vertical {
+    background: #4a5568;
+    border-radius: 4px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #718096;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
 )";
 
 // ── constructor ────────────────────────────────────────────────────────────
@@ -109,6 +141,7 @@ MainWindow::MainWindow(QWidget *parent)
     setMinimumWidth(560);
     setStyleSheet(kStyleSheet);
     setupUI();
+    resize(620, 860);
 
     connect(m_process, &QProcess::readyReadStandardOutput,
             this, &MainWindow::onProcessOutput);
@@ -122,9 +155,23 @@ MainWindow::MainWindow(QWidget *parent)
 // ── UI construction ────────────────────────────────────────────────────────
 void MainWindow::setupUI()
 {
-    auto *central = new QWidget(this);
+    // Outer widget holds the scroll area
+    auto *outerWidget = new QWidget(this);
+    auto *outerLayout = new QVBoxLayout(outerWidget);
+    outerLayout->setContentsMargins(0, 0, 0, 0);
+    setCentralWidget(outerWidget);
+
+    // Scroll area
+    auto *scroll = new QScrollArea(this);
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    outerLayout->addWidget(scroll);
+
+    // Inner widget is what actually holds all the content
+    auto *central = new QWidget();
     central->setObjectName("central");
-    setCentralWidget(central);
+    scroll->setWidget(central);
 
     auto *root = new QVBoxLayout(central);
     root->setContentsMargins(24, 20, 24, 20);
@@ -315,6 +362,15 @@ void MainWindow::setupUI()
     runRow->addWidget(m_runButton);
     root->addLayout(runRow);
 
+    // ── Progress bar ─────────────────────────────────────────────────────
+    m_progressBar = new QProgressBar(this);
+    m_progressBar->setRange(0, 100);
+    m_progressBar->setValue(0);
+    m_progressBar->setTextVisible(true);
+    m_progressBar->setFormat("Production MD — %p%");
+    m_progressBar->setVisible(false); // hidden until simulation starts
+    root->addWidget(m_progressBar);
+
     // ── Log output ───────────────────────────────────────────────────────
     auto *logGroup = new QGroupBox("Output log", this);
     auto *logLayout = new QVBoxLayout(logGroup);
@@ -344,6 +400,30 @@ void MainWindow::onBrowseScript()
     }
 }
 
+// New slot
+void MainWindow::onCheckMdLog()
+{
+    QFile f(m_mdLogPath);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    int lastStep = 0;
+    while (!f.atEnd())
+    {
+        const QString line = f.readLine().trimmed();
+        if (line.startsWith("Step"))
+        {
+            const QString nextLine = f.readLine().trimmed();
+            const int step = nextLine.split(QRegularExpression("\\s+")).first().toInt();
+            if (step > 0)
+                lastStep = step;
+        }
+    }
+
+    if (lastStep > 0 && m_totalSteps > 0)
+        m_progressBar->setValue(lastStep * 100 / m_totalSteps);
+}
+
 void MainWindow::onRunClicked()
 {
     if (scriptPath().isEmpty())
@@ -351,6 +431,17 @@ void MainWindow::onRunClicked()
         QMessageBox::warning(this, "No script", "Please select the chikaterasu.sh script first.");
         return;
     }
+
+    m_progressBar->setValue(0);
+    m_progressBar->setVisible(true);
+
+    /* sim_time_ns * 500000, same formula as bash */
+    m_totalSteps = static_cast<int>(m_simTimeSpin->value() * 500000);
+    m_mdLogPath = QFileInfo(scriptPath()).absolutePath() + "./runs/md_1/md.log"; // adjust path
+
+    m_logWatcher = new QTimer(this);
+    connect(m_logWatcher, &QTimer::timeout, this, &MainWindow::onCheckMdLog);
+    m_logWatcher->start(5000); // poll every 5 seconds
 
     buildAndWriteConfig();
 
@@ -392,6 +483,8 @@ void MainWindow::onProcessOutput()
 
 void MainWindow::onProcessFinished(int exitCode)
 {
+    m_logWatcher->stop();
+    m_progressBar->setValue(100);
     m_runButton->setEnabled(true);
     m_runButton->setText("▶  Run simulation");
     if (exitCode == 0)
