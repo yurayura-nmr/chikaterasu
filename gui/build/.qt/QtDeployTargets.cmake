@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_ChikaterasuGUI_FILE /Users/arurun/Documents/GitHub/chikaterasu/gui/build/ChikaterasuGUI.app/Contents/MacOS/ChikaterasuGUI)
+set(__QT_DEPLOY_TARGET_ChikaterasuGUI_TYPE EXECUTABLE)

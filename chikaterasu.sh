@@ -15,7 +15,7 @@ Affiliation: Kyoto University, Graduate School of Medicine
 : '
 *************************************************************
 Manual Parameter Setup for Current Run
-Note: Most parameters are configured via .mdp files.
+Note: Most parameters are configured via .mdp files in chika_mdp/.
 The starting PDB file must be placed in the gromacs/coord directory.
 
 Debug Level Options:
@@ -98,6 +98,31 @@ Setting up directories for the run.
 *************************************************************
 '
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# If the file exists, print the message AND source the file
+[ -f "$SCRIPT_DIR/chika_gui.conf" ] && {
+    echo "[Chikaterasu] Found chika_gui.conf. Taking parameters from the GUI-written file."
+    source "$SCRIPT_DIR/chika_gui.conf"
+}
+
+# === Patch MDP files from GUI parameters ===
+if [ -n "$CHIKA_GUI" ]; then    
+    REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+    MDP_DIR="$REPO_ROOT/chika_mdp"
+    echo "[Chikaterasu] Patching MDP files in: $MDP_DIR"
+
+    sed -i '' "s/^nsteps[[:space:]]*=.*/nsteps  = $nsteps/" "$MDP_DIR/md.mdp"
+    sed -i '' "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/md.mdp"
+    sed -i '' "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/nvt.mdp"
+    sed -i '' "s/^gen_temp[[:space:]]*=.*/gen_temp = $ref_t/"       "$MDP_DIR/nvt.mdp"
+    sed -i '' "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/npt.mdp" 
+
+    nsteps=$(echo "$sim_time_ns * 500000" | bc | awk '{printf "%d", $1}')
+    sed -i '' "s/^nsteps[[:space:]]*=.*/nsteps  = $nsteps/"         "$MDP_DIR/md.mdp"
+fi
+
+
 if [ -d "./runs" ]; then
     echo "[Chikaterasu] Warning: './runs' directory already exists."
     echo "[Chikaterasu] This suggests a previous run was initiated here."
@@ -154,27 +179,36 @@ if [ ! -e $protein_name.pdb ]; then
     echo "[Chikaterasu] Found PDB input file. Will now convert to gromacs format."
 fi
 
-# Case a: normal protein simulation, no added molecules
-# insert_small_molecules=false
-
 if [ "$insert_small_molecules" = false ] ; then
-    if [ "$his_manual" = true ] ; then
-        gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive -his
+
+    # === Build the base command ===
+    PDB2GMX_BASE="gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -ff $forcefield -ignh"
+    PDB2GMX_BASE_NOFF="gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -ignh"
+
+    if [ -n "$CHIKA_GUI" ]; then
+        # ── GUI path: no interactive flags, no -rtpres ──────────────────
+        if [ "$his_manual" = true ] ; then
+            eval "$PDB2GMX_BASE -his"
+        elif [ "$disulfide" = true ] ; then
+            eval "$PDB2GMX_BASE -ss"
+        elif [ "$amber" = true ] ; then
+            eval "$PDB2GMX_BASE"
+        else
+            eval "$PDB2GMX_BASE"
+        fi
+    else
+        # ── CLI path: original interactive behaviour ─────────────────────
+        if [ "$his_manual" = true ] ; then
+            eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -his"
+        elif [ "$disulfide" = true ] ; then
+            eval "$PDB2GMX_BASE -rtpres -ss"
+        elif [ "$amber" = true ] ; then
+            eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive"
+        else
+            eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -ter"
+        fi
     fi
 
-    if [ "$his_manual" = false ] ; then
-        if [ "$disulfide" = false ] ; then
-            if [ "$amber" = true ] ; then
-                gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
-            fi
-            if [ "$amber" = false ] ; then
-                gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive -ter
-            fi
-        fi
-        if [ "$disulfide" = true ] ; then
-          gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive -ss
-        fi
-    fi
 fi
 
 # Case b: only small molecule simulation, no protein
