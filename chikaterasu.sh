@@ -107,19 +107,17 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 }
 
 # === Patch MDP files from GUI parameters ===
-if [ -n "$CHIKA_GUI" ]; then    
-    REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+if [ -n "$CHIKA_GUI" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+    REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
     MDP_DIR="$REPO_ROOT/chika_mdp"
-    echo "[Chikaterasu] Patching MDP files in: $MDP_DIR"
 
-    sed -i '' "s/^nsteps[[:space:]]*=.*/nsteps  = $nsteps/" "$MDP_DIR/md.mdp"
-    sed -i '' "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/md.mdp"
-    sed -i '' "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/nvt.mdp"
-    sed -i '' "s/^gen_temp[[:space:]]*=.*/gen_temp = $ref_t/"       "$MDP_DIR/nvt.mdp"
-    sed -i '' "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/npt.mdp" 
+    nsteps=$(awk "BEGIN {printf \"%d\", $sim_time_ns * 500000}")
 
-    nsteps=$(echo "$sim_time_ns * 500000" | bc | awk '{printf "%d", $1}')
-    sed -i '' "s/^nsteps[[:space:]]*=.*/nsteps  = $nsteps/"         "$MDP_DIR/md.mdp"
+    sed -i "s/^nsteps[[:space:]]*=.*/nsteps  = $nsteps/" "$MDP_DIR/md.mdp"
+    sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/md.mdp"
+    sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/nvt.mdp"
+    sed -i "s/^gen_temp[[:space:]]*=.*/gen_temp = $ref_t/" "$MDP_DIR/nvt.mdp"
 fi
 
 
