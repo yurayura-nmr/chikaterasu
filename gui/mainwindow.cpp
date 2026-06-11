@@ -281,6 +281,43 @@ void MainWindow::setupUI()
                                  "For interactive chain/merge selection, use the CLI directly.");
     form->addRow("Disulfide bonds:", m_disulfideCheck);
 
+    // === Box configuration ===
+    auto *boxGroup = new QGroupBox("Box configuration", this);
+    auto *boxVbox  = new QVBoxLayout(boxGroup);
+    boxVbox->setContentsMargins(12, 16, 12, 12);
+    boxVbox->setSpacing(8);
+
+    m_boxManualCheck = new QCheckBox("Manually specify box dimensions", this);
+    m_boxManualCheck->setChecked(false);
+    boxVbox->addWidget(m_boxManualCheck);
+
+    // Container widget — hidden by default
+    m_boxManualWidget = new QWidget(this);
+    auto *boxForm = new QFormLayout(m_boxManualWidget);
+    boxForm->setContentsMargins(0, 4, 0, 0);
+    boxForm->setSpacing(8);
+
+    m_boxDimEdit = new QLineEdit(this);
+    m_boxDimEdit->setText("8.00   8.00   8.00");
+    m_boxDimEdit->setPlaceholderText("x   y   z  (nm)");
+    boxForm->addRow("Box dimensions (nm):", m_boxDimEdit);
+
+    m_cellShapeCombo = new QComboBox(this);
+    m_cellShapeCombo->addItem("Triclinic",     "triclinic");
+    m_cellShapeCombo->addItem("Cubic",         "cubic");
+    m_cellShapeCombo->addItem("Dodecahedron",  "dodecahedron");
+    m_cellShapeCombo->addItem("Octahedron",    "octahedron");
+    m_cellShapeCombo->setCurrentIndex(0);
+    boxForm->addRow("Cell shape:", m_cellShapeCombo);
+
+    m_boxManualWidget->setVisible(false);
+    boxVbox->addWidget(m_boxManualWidget);
+
+    root->addWidget(boxGroup);
+
+    connect(m_boxManualCheck, &QCheckBox::toggled,
+            m_boxManualWidget, &QWidget::setVisible);
+
     // === Ion Configuration ===
     auto *ionGroup = new QGroupBox("Ion configuration", this);
     auto *ionVbox = new QVBoxLayout(ionGroup);
@@ -522,4 +559,9 @@ void MainWindow::buildAndWriteConfig()
     ts << "pos_ions=" << m_posIonsSpin->value() << "\n";
     ts << "neg_ions=" << m_negIonsSpin->value() << "\n";
     ts << "magnesium=" << (m_magnesiumCheck->isChecked() ? "true" : "false") << "\n";
+
+    const bool boxManual = m_boxManualCheck->isChecked();
+    ts << "box_manual=" << (boxManual ? "true" : "false") << "\n";
+    ts << "box_dim=\"    " << m_boxDimEdit->text().trimmed() << " \"\n";
+    ts << "cell_shape=\"" << m_cellShapeCombo->currentData().toString() << "\"\n";
 }
