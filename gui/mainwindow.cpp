@@ -446,10 +446,7 @@ void MainWindow::onProcessOutput()
 
     if (!err.isEmpty())
     {
-        m_logOutput->append("RAW: " + err.left(200).toHtmlEscaped()); // temporary debug
-        static QRegularExpression reStep(R"(^\s*(\d+)\s+[\d.]+\s*$)");
-
-        // Split on both newlines and carriage returns
+        static QRegularExpression reStep(R"(^step\s+(\d+),)");
         const QStringList lines = err.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
 
         for (const QString &line : lines)
