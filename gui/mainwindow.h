@@ -18,7 +18,6 @@
 #include <QStackedWidget>
 #include <QSettings>
 #include <QProgressBar>
-#include <QTimer>
 #include <QSpinBox>
 #include <QScrollArea>
 
@@ -35,7 +34,6 @@ private slots:
     void onBrowseScript();
     void onProcessOutput();
     void onProcessFinished(int exitCode);
-    void onCheckMdLog();
 
 private:
     void setupUI();
@@ -69,10 +67,8 @@ private:
     QPushButton *m_browseButton;
 
     // Progress
-    QProgressBar *m_progressBar;
-    QTimer *m_logWatcher;
-    QString m_mdLogPath;
-    int m_totalSteps;
+    QProgressBar *m_progressBar;    
+    int m_totalSteps = 0;
 
     // Output log
     QTextEdit *m_logOutput;

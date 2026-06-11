@@ -9,6 +9,7 @@
 #include <QFrame>
 #include <QScrollBar>
 #include <QComboBox>
+#include <QRegularExpression>
 
 // ── colour / style tokens ──────────────────────────────────────────────────
 static const char *kStyleSheet = R"(
@@ -400,30 +401,6 @@ void MainWindow::onBrowseScript()
     }
 }
 
-// New slot
-void MainWindow::onCheckMdLog()
-{
-    QFile f(m_mdLogPath);
-    if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
-
-    int lastStep = 0;
-    while (!f.atEnd())
-    {
-        const QString line = f.readLine().trimmed();
-        if (line.startsWith("Step"))
-        {
-            const QString nextLine = f.readLine().trimmed();
-            const int step = nextLine.split(QRegularExpression("\\s+")).first().toInt();
-            if (step > 0)
-                lastStep = step;
-        }
-    }
-
-    if (lastStep > 0 && m_totalSteps > 0)
-        m_progressBar->setValue(lastStep * 100 / m_totalSteps);
-}
-
 void MainWindow::onRunClicked()
 {
     if (scriptPath().isEmpty())
@@ -435,14 +412,7 @@ void MainWindow::onRunClicked()
     m_progressBar->setValue(0);
     m_progressBar->setVisible(true);
 
-    /* sim_time_ns * 500000, same formula as bash */
     m_totalSteps = static_cast<int>(m_simTimeSpin->value() * 500000);
-    m_mdLogPath = QFileInfo(scriptPath()).absolutePath() + "./runs/md_1/md.log"; // adjust path
-
-    m_logWatcher = new QTimer(this);
-    connect(m_logWatcher, &QTimer::timeout, this, &MainWindow::onCheckMdLog);
-    m_logWatcher->start(5000); // poll every 5 seconds
-
     buildAndWriteConfig();
 
     m_logOutput->clear();
@@ -470,28 +440,50 @@ void MainWindow::onProcessOutput()
 {
     const QString out = m_process->readAllStandardOutput();
     const QString err = m_process->readAllStandardError();
+
     if (!out.isEmpty())
         m_logOutput->append(out.trimmed());
-    if (!err.isEmpty())
-        m_logOutput->append(
-            "<span style='color:#fc8181'>" + err.trimmed().toHtmlEscaped() + "</span>");
 
-    // auto-scroll
+    if (!err.isEmpty())
+    {
+        // Parse step progress from mdrun -v stderr: "           Step           Time"
+        // followed by "       317000       634.00000"
+        // or the compact form: "step= 317000"
+        static QRegularExpression reStep(R"(^\s*(\d+)\s+[\d.]+\s*$)");
+        for (const QString &line : err.split('\n'))
+        {
+            QRegularExpressionMatch m = reStep.match(line.trimmed());
+            if (m.hasMatch() && m_totalSteps > 0)
+            {
+                const int step = m.captured(1).toInt();
+                if (step > 0)
+                    m_progressBar->setValue(step * 100 / m_totalSteps);
+            }
+            else
+            {
+                // Only show non-progress lines in the log
+                const QString trimmed = line.trimmed();
+                if (!trimmed.isEmpty())
+                    m_logOutput->append(
+                        "<span style='color:#fc8181'>" + trimmed.toHtmlEscaped() + "</span>");
+            }
+        }
+    }
+
     m_logOutput->verticalScrollBar()->setValue(
         m_logOutput->verticalScrollBar()->maximum());
 }
 
 void MainWindow::onProcessFinished(int exitCode)
 {
-    m_logWatcher->stop();
     m_progressBar->setValue(100);
     m_runButton->setEnabled(true);
     m_runButton->setText("▶  Run simulation");
     if (exitCode == 0)
-        m_logOutput->append("<span style='color:#68d391'>✓ Finished successfully.</span>");
+        m_logOutput->append("<span style='color:#68d391'> Finished successfully.</span>");
     else
         m_logOutput->append(
-            QString("<span style='color:#fc8181'>✗ Exited with code %1.</span>").arg(exitCode));
+            QString("<span style='color:#fc8181'> Exited with code %1.</span>").arg(exitCode));
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
