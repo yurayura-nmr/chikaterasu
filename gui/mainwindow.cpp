@@ -446,22 +446,23 @@ void MainWindow::onProcessOutput()
 
     if (!err.isEmpty())
     {
-        // Parse step progress from mdrun -v stderr: "           Step           Time"
-        // followed by "       317000       634.00000"
-        // or the compact form: "step= 317000"
+        m_logOutput->append("RAW: " + err.left(200).toHtmlEscaped()); // temporary debug
         static QRegularExpression reStep(R"(^\s*(\d+)\s+[\d.]+\s*$)");
-        for (const QString &line : err.split('\n'))
+
+        // Split on both newlines and carriage returns
+        const QStringList lines = err.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
+
+        for (const QString &line : lines)
         {
-            QRegularExpressionMatch m = reStep.match(line.trimmed());
-            if (m.hasMatch() && m_totalSteps > 0)
+            QRegularExpressionMatch match = reStep.match(line.trimmed());
+            if (match.hasMatch() && m_totalSteps > 0)
             {
-                const int step = m.captured(1).toInt();
+                const int step = match.captured(1).toInt();
                 if (step > 0)
                     m_progressBar->setValue(step * 100 / m_totalSteps);
             }
             else
             {
-                // Only show non-progress lines in the log
                 const QString trimmed = line.trimmed();
                 if (!trimmed.isEmpty())
                     m_logOutput->append(
