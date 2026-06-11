@@ -53,6 +53,11 @@ private:
     QCheckBox *m_disulfideCheck;       // pdb2gmx -ss
     QComboBox *m_forceFieldCombo;      // force field
 
+    QCheckBox  *m_boxManualCheck;
+    QWidget    *m_boxManualWidget;   // container shown/hidden
+    QLineEdit  *m_boxDimEdit;
+    QComboBox  *m_cellShapeCombo;
+
     QRadioButton *m_ionModeSalt;
     QRadioButton *m_ionModeManual;
     QButtonGroup *m_ionModeGroup;
