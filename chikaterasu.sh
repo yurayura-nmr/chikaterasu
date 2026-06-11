@@ -109,7 +109,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # === Patch MDP files from GUI parameters ===
 if [ -n "$CHIKA_GUI" ]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-    REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+    REPO_ROOT="$(cd "$SCRIPT_DIR" && pwd)"
     MDP_DIR="$REPO_ROOT/chika_mdp"
 
     nsteps=$(awk "BEGIN {printf \"%d\", $sim_time_ns * 500000}")
