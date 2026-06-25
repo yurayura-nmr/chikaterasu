@@ -90,13 +90,6 @@ cell_shape="triclinic"      # Available shapes: triclinic, cubic, dodecahedron, 
 water="tip4p"      
 #water_file="tip4p.gro"
 
-# === Derive water_file from water model ===
-case "$water" in
-    tip4p)  water_file="tip4p.gro" ;;
-    tip5p)  water_file="tip5p.gro" ;;
-    *)      water_file=""         ;;   # tip3p, spc, spce, none → use gmx default
-esac
-
 : '
 *************************************************************
 No further modifications should be needed beyond this point.
@@ -112,6 +105,13 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     echo "[Chikaterasu] Found chika_gui.conf. Taking parameters from the GUI-written file."
     source "$SCRIPT_DIR/chika_gui.conf"
 }
+
+# === Derive water_file from water model ===
+case "$water" in
+    tip4p)  water_file="tip4p.gro" ;;
+    tip5p)  water_file="tip5p.gro" ;;
+    *)      water_file=""         ;;   # tip3p, spc, spce, none → use gmx default
+esac
 
 # === Patch MDP files from GUI parameters ===
 if [ -n "$CHIKA_GUI" ]; then
