@@ -277,9 +277,9 @@ fi
 echo "[Chikaterasu] water=$water water_file=$water_file"
 
 if [ -n "$water_file" ]; then
-    gmx solvate -cp ./$protein_name.pdb_solv.gro -cs $water_file -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+    gmx solvate -cp ./$protein_name.pdb_newbox.gro -cs $water_file -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
 else
-    gmx solvate -cp ./$protein_name.pdb_solv.gro -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+    gmx solvate -cp ./$protein_name.pdb_newbox.gro -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
 fi
 
 
