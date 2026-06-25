@@ -132,6 +132,19 @@ QScrollBar::handle:vertical:hover {
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
 }
+QPushButton#stopButton {
+    background: #742a2a;
+    color: #fed7d7;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    min-height: 38px;
+}
+QPushButton#stopButton:hover   { background: #9b2c2c; }
+QPushButton#stopButton:pressed { background: #63171b; }
+QPushButton#stopButton:disabled{ background: #2d3748; color: #4a5568; }
 )";
 
 // ── constructor ────────────────────────────────────────────────────────────
@@ -261,13 +274,13 @@ void MainWindow::setupUI()
 
     // Select water model from Combo box
     m_waterModelCombo = new QComboBox(this);
-    m_waterModelCombo->addItem("TIP3P",  "tip3p");
-    m_waterModelCombo->addItem("TIP4P",  "tip4p");
-    m_waterModelCombo->addItem("TIP5P",  "tip5p");
-    m_waterModelCombo->addItem("SPC",    "spc");
-    m_waterModelCombo->addItem("SPC/E",  "spce");
-    m_waterModelCombo->addItem("None",   "none");
-    m_waterModelCombo->setCurrentIndex(1);   // TIP4P default but do not use it for shear-flow
+    m_waterModelCombo->addItem("TIP3P", "tip3p");
+    m_waterModelCombo->addItem("TIP4P", "tip4p");
+    m_waterModelCombo->addItem("TIP5P", "tip5p");
+    m_waterModelCombo->addItem("SPC", "spc");
+    m_waterModelCombo->addItem("SPC/E", "spce");
+    m_waterModelCombo->addItem("None", "none");
+    m_waterModelCombo->setCurrentIndex(1); // TIP4P default but do not use it for shear-flow
     form->addRow("Water model:", m_waterModelCombo);
 
     // Debug level
@@ -283,9 +296,9 @@ void MainWindow::setupUI()
     form->addRow("Stop after:", m_debugLevelCombo);
 
     // Histidine - Let gromacs handle it or specify?
-    //m_hisManualCheck = new QCheckBox("Manually specify histidine protonation", this);
-    //m_hisManualCheck->setChecked(false);
-    //form->addRow("Histidine:", m_hisManualCheck);
+    // m_hisManualCheck = new QCheckBox("Manually specify histidine protonation", this);
+    // m_hisManualCheck->setChecked(false);
+    // form->addRow("Histidine:", m_hisManualCheck);
 
     m_disulfideCheck = new QCheckBox("Auto-detect disulfide bridges  (-ss)", this);
     m_disulfideCheck->setChecked(false);
@@ -295,7 +308,7 @@ void MainWindow::setupUI()
 
     // === Box configuration ===
     auto *boxGroup = new QGroupBox("Box configuration", this);
-    auto *boxVbox  = new QVBoxLayout(boxGroup);
+    auto *boxVbox = new QVBoxLayout(boxGroup);
     boxVbox->setContentsMargins(12, 16, 12, 12);
     boxVbox->setSpacing(8);
 
@@ -315,10 +328,10 @@ void MainWindow::setupUI()
     boxForm->addRow("Box dimensions (nm):", m_boxDimEdit);
 
     m_cellShapeCombo = new QComboBox(this);
-    m_cellShapeCombo->addItem("Triclinic",     "triclinic");
-    m_cellShapeCombo->addItem("Cubic",         "cubic");
-    m_cellShapeCombo->addItem("Dodecahedron",  "dodecahedron");
-    m_cellShapeCombo->addItem("Octahedron",    "octahedron");
+    m_cellShapeCombo->addItem("Triclinic", "triclinic");
+    m_cellShapeCombo->addItem("Cubic", "cubic");
+    m_cellShapeCombo->addItem("Dodecahedron", "dodecahedron");
+    m_cellShapeCombo->addItem("Octahedron", "octahedron");
     m_cellShapeCombo->setCurrentIndex(0);
     boxForm->addRow("Cell shape:", m_cellShapeCombo);
 
@@ -406,10 +419,18 @@ void MainWindow::setupUI()
     // ── Run button ───────────────────────────────────────────────────────
     auto *runRow = new QHBoxLayout;
     runRow->addStretch(1);
+
+    m_stopButton = new QPushButton("■  Stop", this);
+    m_stopButton->setObjectName("stopButton");
+    m_stopButton->setEnabled(false);
+    connect(m_stopButton, &QPushButton::clicked, this, &MainWindow::onStopClicked);
+    runRow->addWidget(m_stopButton);
+
     m_runButton = new QPushButton("▶  Run simulation", this);
     m_runButton->setObjectName("runButton");
     connect(m_runButton, &QPushButton::clicked, this, &MainWindow::onRunClicked);
     runRow->addWidget(m_runButton);
+
     root->addLayout(runRow);
 
     // ── Progress bar ─────────────────────────────────────────────────────
@@ -469,6 +490,7 @@ void MainWindow::onRunClicked()
 
     m_runButton->setEnabled(false);
     m_runButton->setText("Running…");
+    m_stopButton->setEnabled(true);
 
     // Patch env variables and call the script
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
@@ -479,8 +501,9 @@ void MainWindow::onRunClicked()
     env.insert("CHIKA_SIMTIME", QString::number(m_simTimeSpin->value(), 'f', 1));
     m_process->setProcessEnvironment(env);
     m_process->setWorkingDirectory(QFileInfo(scriptPath()).absolutePath());
-    m_process->setProgram("bash");
-    m_process->setArguments({"-c",
+    
+    m_process->setProgram("setsid");
+    m_process->setArguments({"bash", "-c",
                              "source /usr/local/gromacs/bin/GMXRC && bash \"" + scriptPath() + "\""});
     m_process->start();
 }
@@ -526,11 +549,28 @@ void MainWindow::onProcessFinished(int exitCode)
     m_progressBar->setValue(100);
     m_runButton->setEnabled(true);
     m_runButton->setText("▶  Run simulation");
+    m_stopButton->setEnabled(false); 
     if (exitCode == 0)
         m_logOutput->append("<span style='color:#68d391'> Finished successfully.</span>");
     else
         m_logOutput->append(
             QString("<span style='color:#fc8181'> Exited with code %1.</span>").arg(exitCode));
+}
+
+void MainWindow::onStopClicked()
+{
+    if (m_process->state() == QProcess::NotRunning)
+        return;
+
+    const qint64 pid = m_process->processId();
+    if (pid > 0)
+    {
+        // Kill the entire process group (negative PID) so child
+        // processes like gmx mdrun are terminated too, not just bash.
+        QProcess::execute("kill", {"-TERM", "-" + QString::number(pid)});
+    }
+
+    m_logOutput->append("<span style='color:#fc8181'>⏹ Stopped by user.</span>");
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
@@ -560,7 +600,7 @@ void MainWindow::buildAndWriteConfig()
     ts << "ref_t=" << QString::number(m_temperatureSpin->value(), 'f', 1) << "\n";
     ts << "sim_time_ns=" << QString::number(m_simTimeSpin->value(), 'f', 1) << "\n";
     ts << "debug_level=" << m_debugLevelCombo->currentData().toInt() << "\n";
-    //ts << "his_manual=" << (m_hisManualCheck->isChecked() ? "true" : "false") << "\n";
+    // ts << "his_manual=" << (m_hisManualCheck->isChecked() ? "true" : "false") << "\n";
     ts << "water=" << m_waterModelCombo->currentData().toString() << "\n";
     ts << "nruns=" << m_nrunsSpin->value() << "\n";
     ts << "disulfide=" << (m_disulfideCheck->isChecked() ? "true" : "false") << "\n";

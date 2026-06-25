@@ -31,6 +31,7 @@ public:
 
 private slots:
     void onRunClicked();
+    void onStopClicked();
     void onBrowseScript();
     void onProcessOutput();
     void onProcessFinished(int exitCode);
@@ -70,6 +71,7 @@ private:
 
     // Run control
     QPushButton *m_runButton;
+    QPushButton *m_stopButton;
     QPushButton *m_browseButton;
 
     // Progress
