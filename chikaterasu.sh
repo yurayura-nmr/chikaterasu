@@ -124,6 +124,7 @@ if [ -n "$CHIKA_GUI" ]; then
     sed -i "s/^nsteps[[:space:]]*=.*/nsteps  = $nsteps/" "$MDP_DIR/md.mdp"
     sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/md.mdp"
     sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/nvt.mdp"
+    sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/npt.mdp"
     sed -i "s/^gen_temp[[:space:]]*=.*/gen_temp = $ref_t/" "$MDP_DIR/nvt.mdp"
 fi
 
