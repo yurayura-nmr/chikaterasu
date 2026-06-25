@@ -501,7 +501,7 @@ void MainWindow::onRunClicked()
     env.insert("CHIKA_SIMTIME", QString::number(m_simTimeSpin->value(), 'f', 1));
     m_process->setProcessEnvironment(env);
     m_process->setWorkingDirectory(QFileInfo(scriptPath()).absolutePath());
-    
+
     m_process->setProgram("setsid");
     m_process->setArguments({"bash", "-c",
                              "source /usr/local/gromacs/bin/GMXRC && bash \"" + scriptPath() + "\""});
@@ -549,7 +549,7 @@ void MainWindow::onProcessFinished(int exitCode)
     m_progressBar->setValue(100);
     m_runButton->setEnabled(true);
     m_runButton->setText("▶  Run simulation");
-    m_stopButton->setEnabled(false); 
+    m_stopButton->setEnabled(false);
     if (exitCode == 0)
         m_logOutput->append("<span style='color:#68d391'> Finished successfully.</span>");
     else
@@ -565,12 +565,14 @@ void MainWindow::onStopClicked()
     const qint64 pid = m_process->processId();
     if (pid > 0)
     {
-        // Kill the entire process group (negative PID) so child
-        // processes like gmx mdrun are terminated too, not just bash.
+        // Kill everything in this process's session
+        QProcess::execute("pkill", {"-TERM", "-s", QString::number(pid)});
+        // Fallback: also kill the process group directly
         QProcess::execute("kill", {"-TERM", "-" + QString::number(pid)});
     }
 
     m_logOutput->append("<span style='color:#fc8181'>⏹ Stopped by user.</span>");
+    m_process->kill(); // ensure QProcess itself is also reaped
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
