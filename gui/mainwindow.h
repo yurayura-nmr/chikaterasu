@@ -48,7 +48,8 @@ private:
     QDoubleSpinBox *m_temperatureSpin; // K
     QDoubleSpinBox *m_simTimeSpin;     // ns
     QComboBox *m_debugLevelCombo;      // int
-    QCheckBox *m_hisManualCheck;       // yes/no
+    //QCheckBox *m_hisManualCheck;       // yes/no
+    QComboBox *m_waterModelCombo;      // What water model is used?
     QSpinBox *m_nrunsSpin;             // How many simulations to run?
     QCheckBox *m_disulfideCheck;       // pdb2gmx -ss
     QComboBox *m_forceFieldCombo;      // force field

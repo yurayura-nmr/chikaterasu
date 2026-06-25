@@ -88,7 +88,17 @@ cell_shape="triclinic"      # Available shapes: triclinic, cubic, dodecahedron, 
 # Note: For rheological MD (rheoMD) simulations, use the SPCE water model ("spce" / "spc216.gro").
 # TIP4P-based models are known to exhibit instability and may lead to simulation crashes under shear conditions.
 water="tip4p"      
-water_file="tip4p.gro"
+#water_file="tip4p.gro"
+
+# === Derive water_file from water model ===
+case "$water" in
+    tip3p)  water_file="spc216.gro" ;;   # GROMACS ships no tip3p.gro; spc216 geometry is compatible
+    tip4p)  water_file="tip4p.gro"  ;;
+    tip5p)  water_file="tip5p.gro"  ;;
+    spc)    water_file="spc216.gro" ;;
+    spce)   water_file="spc216.gro" ;;
+    none)   water_file=""           ;;
+esac
 
 : '
 *************************************************************

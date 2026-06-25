@@ -182,7 +182,7 @@ void MainWindow::setupUI()
     auto *titleLabel = new QLabel("Chikaterasu", this);
     titleLabel->setObjectName("sectionTitle");
 
-    auto *subtitleLabel = new QLabel("GROMACS automated MD launcher  ·  Kyoto University", this);
+    auto *subtitleLabel = new QLabel("GROMACS automated MD launcher", this);
     subtitleLabel->setObjectName("subtitle");
 
     root->addWidget(titleLabel);
@@ -237,6 +237,7 @@ void MainWindow::setupUI()
     m_temperatureSpin->setSuffix("  K");
     form->addRow("Temperature:", m_temperatureSpin);
 
+    // Select Force field from Combo box
     m_forceFieldCombo = new QComboBox(this);
     m_forceFieldCombo->addItem("AMBER99SB-ILDN (recommended)", "amber99sb-ildn");
     m_forceFieldCombo->addItem("AMBER99SB", "amber99sb");
@@ -258,6 +259,17 @@ void MainWindow::setupUI()
     m_forceFieldCombo->setCurrentIndex(0); // AMBER99SB-ILDN as default
     form->addRow("Force field:", m_forceFieldCombo);
 
+    // Select water model from Combo box
+    m_waterModelCombo = new QComboBox(this);
+    m_waterModelCombo->addItem("TIP3P",  "tip3p");
+    m_waterModelCombo->addItem("TIP4P",  "tip4p");
+    m_waterModelCombo->addItem("TIP5P",  "tip5p");
+    m_waterModelCombo->addItem("SPC",    "spc");
+    m_waterModelCombo->addItem("SPC/E",  "spce");
+    m_waterModelCombo->addItem("None",   "none");
+    m_waterModelCombo->setCurrentIndex(1);   // TIP4P default but do not use it for shear-flow
+    form->addRow("Water model:", m_waterModelCombo);
+
     // Debug level
     m_debugLevelCombo = new QComboBox(this);
     m_debugLevelCombo->addItem("[MD] Full production run (NPT)", 0);
@@ -271,9 +283,9 @@ void MainWindow::setupUI()
     form->addRow("Stop after:", m_debugLevelCombo);
 
     // Histidine - Let gromacs handle it or specify?
-    m_hisManualCheck = new QCheckBox("Manually specify histidine protonation", this);
-    m_hisManualCheck->setChecked(false);
-    form->addRow("Histidine:", m_hisManualCheck);
+    //m_hisManualCheck = new QCheckBox("Manually specify histidine protonation", this);
+    //m_hisManualCheck->setChecked(false);
+    //form->addRow("Histidine:", m_hisManualCheck);
 
     m_disulfideCheck = new QCheckBox("Auto-detect disulfide bridges  (-ss)", this);
     m_disulfideCheck->setChecked(false);
@@ -548,7 +560,8 @@ void MainWindow::buildAndWriteConfig()
     ts << "ref_t=" << QString::number(m_temperatureSpin->value(), 'f', 1) << "\n";
     ts << "sim_time_ns=" << QString::number(m_simTimeSpin->value(), 'f', 1) << "\n";
     ts << "debug_level=" << m_debugLevelCombo->currentData().toInt() << "\n";
-    ts << "his_manual=" << (m_hisManualCheck->isChecked() ? "true" : "false") << "\n";
+    //ts << "his_manual=" << (m_hisManualCheck->isChecked() ? "true" : "false") << "\n";
+    ts << "water=" << m_waterModelCombo->currentData().toString() << "\n";
     ts << "nruns=" << m_nrunsSpin->value() << "\n";
     ts << "disulfide=" << (m_disulfideCheck->isChecked() ? "true" : "false") << "\n";
     ts << "forcefield=" << m_forceFieldCombo->currentData().toString() << "\n";
