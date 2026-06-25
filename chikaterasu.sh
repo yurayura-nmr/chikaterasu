@@ -92,12 +92,9 @@ water="tip4p"
 
 # === Derive water_file from water model ===
 case "$water" in
-    tip3p)  water_file="spc216.gro" ;;   # GROMACS ships no tip3p.gro; spc216 geometry is compatible
-    tip4p)  water_file="tip4p.gro"  ;;
-    tip5p)  water_file="tip5p.gro"  ;;
-    spc)    water_file="spc216.gro" ;;
-    spce)   water_file="spc216.gro" ;;
-    none)   water_file=""           ;;
+    tip4p)  water_file="tip4p.gro" ;;
+    tip5p)  water_file="tip5p.gro" ;;
+    *)      water_file=""         ;;   # tip3p, spc, spce, none → use gmx default
 esac
 
 : '
@@ -275,7 +272,14 @@ if [ "$box_empty" = true ] ; then
     echo "$box_dim" >> $protein_name.pdb_newbox.gro
 fi
 
-gmx solvate -cp ./$protein_name.pdb_newbox.gro -cs $water_file -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+#gmx solvate -cp ./$protein_name.pdb_newbox.gro -cs $water_file -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+
+if [ -n "$water_file" ]; then
+    gmx solvate -cp ./$protein_name.pdb_solv.gro -cs $water_file -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+else
+    gmx solvate -cp ./$protein_name.pdb_solv.gro -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+fi
+
 
 cd ../..
 
