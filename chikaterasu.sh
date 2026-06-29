@@ -493,7 +493,12 @@ do
             # 1. Single coupling group (GROMACS 2025 requires this with deform)
             sed -i "s/^tc-grps[[:space:]]*=.*/tc-grps = System/" "$MDP_DIR/md.mdp"
             sed -i "s/^tau_t[[:space:]]*=.*/tau_t   = 0.1/"       "$MDP_DIR/md.mdp"
-            sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t/"    "$MDP_DIR/md.mdp"
+
+            # test
+            ref_t_single="${ref_t%% *}"
+            sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t_single/" "$MDP_DIR/md.mdp"
+
+            #sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t/"    "$MDP_DIR/md.mdp"
 
             cat >> ./md.mdp << EOF
 ; Flow
