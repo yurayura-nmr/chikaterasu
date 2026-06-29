@@ -41,7 +41,7 @@ his_manual=false            # Manually specify histidine protonation states (set
 enable_disres=false         # For generic DISRES-based restraints
 enable_metal_bonds=false    # For adding zn_bond.top entries
 disulfide=false             # Will be overwritten by GUI setting if using GUI. Specify whether to account for disulfide bridges during topology generation.
-forcefield=amber99sb-ildn   # Will be overwritten by GUI setting if using GUI.
+forcefield=amber99sb-ildn   # Will be overwritten by GUI setting if using GUI. Comment this out for interactive option (-ff)
 
 # === Ion Configuration ===
 specify_salt_concentration=true  # Specify salt concentration in molar units (true), or manually count ions (false).
