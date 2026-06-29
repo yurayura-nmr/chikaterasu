@@ -49,16 +49,16 @@ private:
     QDoubleSpinBox *m_temperatureSpin; // K
     QDoubleSpinBox *m_simTimeSpin;     // ns
     QComboBox *m_debugLevelCombo;      // int
-    //QCheckBox *m_hisManualCheck;       // yes/no
-    QComboBox *m_waterModelCombo;      // What water model is used?
-    QSpinBox *m_nrunsSpin;             // How many simulations to run?
-    QCheckBox *m_disulfideCheck;       // pdb2gmx -ss
-    QComboBox *m_forceFieldCombo;      // force field
+    // QCheckBox *m_hisManualCheck;       // yes/no
+    QComboBox *m_waterModelCombo; // What water model is used?
+    QSpinBox *m_nrunsSpin;        // How many simulations to run?
+    QCheckBox *m_disulfideCheck;  // pdb2gmx -ss
+    QComboBox *m_forceFieldCombo; // force field
 
-    QCheckBox  *m_boxManualCheck;
-    QWidget    *m_boxManualWidget;   // container shown/hidden
-    QLineEdit  *m_boxDimEdit;
-    QComboBox  *m_cellShapeCombo;
+    QCheckBox *m_boxManualCheck;
+    QWidget *m_boxManualWidget; // container shown/hidden
+    QLineEdit *m_boxDimEdit;
+    QComboBox *m_cellShapeCombo;
 
     QRadioButton *m_ionModeSalt;
     QRadioButton *m_ionModeManual;
@@ -69,13 +69,17 @@ private:
     QSpinBox *m_negIonsSpin;
     QCheckBox *m_magnesiumCheck;
 
+    // Rheo
+    QCheckBox *m_shearCheck;
+    QDoubleSpinBox *m_shearRateSpin; // nm/ps, the last value in the deform vector
+
     // Run control
     QPushButton *m_runButton;
     QPushButton *m_stopButton;
     QPushButton *m_browseButton;
 
     // Progress
-    QProgressBar *m_progressBar;    
+    QProgressBar *m_progressBar;
     int m_totalSteps = 0;
 
     // Output log

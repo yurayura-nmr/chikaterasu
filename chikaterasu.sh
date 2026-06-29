@@ -473,13 +473,31 @@ do
 
         cp ../../chika_mdp/md.mdp ./md.mdp
 
-        gmx grompp -f ./md.mdp -c ../npt/npt.gro -t ../npt/npt.cpt -p ../../gromacs/top/topol.top -o md.tpr -maxwarn 1
+        # 3. MD
+        cd runs/md
 
-        # Optional: Use the following commands only if you need to manually inspect the simulation box or setup
-        # before starting the production run. These steps are not required under normal conditions.
-        # (Temporarily disabled, since routine runs do not require manual verification.)
-        # gmx editconf -f md.tpr -o system_before_md.pdb
-        # gmx editconf -f md.tpr -o md.gro
+        cp ../../chika_mdp/md.mdp ./md.mdp
+
+        # === Patch shear flow into this run's md.mdp copy only ===
+        if [ "$shear_enabled" = "true" ]; then
+            echo "[Chikaterasu] Shear flow enabled, rate=$shear_rate nm/ps"
+
+            sed -i "/^pcoupl[[:space:]]*=/ s/^/;/"          ./md.mdp
+            sed -i "/^pcoupltype[[:space:]]*=/ s/^/;/"      ./md.mdp
+            sed -i "/^tau_p[[:space:]]*=/ s/^/;/"           ./md.mdp
+            sed -i "/^ref_p[[:space:]]*=/ s/^/;/"           ./md.mdp
+            sed -i "/^compressibility[[:space:]]*=/ s/^/;/" ./md.mdp
+
+            cat >> ./md.mdp << EOF
+; Flow
+; velocity [nm/ps]
+; NOTE spce water appears the most stable for shear-simulations.
+deform           = 0 0 0 0 0 $shear_rate
+deform-init-flow = yes
+EOF
+        fi
+
+        gmx grompp -f ./md.mdp -c ../npt/npt.gro -t ../npt/npt.cpt -p ../../gromacs/top/topol.top -o md.tpr -maxwarn 1
 
         # Note (2022-05-09): When running rheological (shear-flow) MD simulations using the `mdrun -deform` option,
         # certain systems may exhibit issues with Thread-MPI optimization. In such cases, using the fallback command

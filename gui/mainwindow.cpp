@@ -316,6 +316,36 @@ void MainWindow::setupUI()
     m_boxManualCheck->setChecked(false);
     boxVbox->addWidget(m_boxManualCheck);
 
+    // === Shear flow (Rheo-MD) ===
+    auto *shearGroup = new QGroupBox("Shear flow (Rheo-MD)", this);
+    auto *shearVbox = new QVBoxLayout(shearGroup);
+    shearVbox->setContentsMargins(12, 16, 12, 12);
+    shearVbox->setSpacing(8);
+
+    m_shearCheck = new QCheckBox("Enable shear flow", this);
+    m_shearCheck->setChecked(false);
+    m_shearCheck->setToolTip("Disables pressure coupling and applies a deforming box.\n"
+                             "SPC/E water is recommended for stability under shear.");
+    shearVbox->addWidget(m_shearCheck);
+
+    auto *shearRateWidget = new QWidget(this);
+    auto *shearForm = new QFormLayout(shearRateWidget);
+    shearForm->setContentsMargins(0, 4, 0, 0);
+
+    m_shearRateSpin = new QDoubleSpinBox(this);
+    m_shearRateSpin->setRange(0.0, 1.0);
+    m_shearRateSpin->setSingleStep(0.001);
+    m_shearRateSpin->setDecimals(4);
+    m_shearRateSpin->setValue(0.01);
+    m_shearRateSpin->setSuffix("  nm/ps");
+    shearForm->addRow("Shear rate:", m_shearRateSpin);
+
+    shearRateWidget->setVisible(false);
+    shearVbox->addWidget(shearRateWidget);
+    root->addWidget(shearGroup);
+
+    connect(m_shearCheck, &QCheckBox::toggled, shearRateWidget, &QWidget::setVisible);
+
     // Container widget — hidden by default
     m_boxManualWidget = new QWidget(this);
     auto *boxForm = new QFormLayout(m_boxManualWidget);
@@ -619,4 +649,7 @@ void MainWindow::buildAndWriteConfig()
     ts << "box_manual=" << (boxManual ? "true" : "false") << "\n";
     ts << "box_dim=\"    " << m_boxDimEdit->text().trimmed() << " \"\n";
     ts << "cell_shape=\"" << m_cellShapeCombo->currentData().toString() << "\"\n";
+
+    ts << "shear_enabled=" << (m_shearCheck->isChecked() ? "true" : "false") << "\n";
+    ts << "shear_rate=" << QString::number(m_shearRateSpin->value(), 'f', 4) << "\n";
 }
