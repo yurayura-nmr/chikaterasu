@@ -483,23 +483,18 @@ do
         if [ "$shear_enabled" = "true" ]; then
             echo "[Chikaterasu] Shear flow enabled, rate=$shear_rate nm/ps"
 
-            # NVT
+            # 1. Single coupling group (GROMACS 2025 requires this with deform)
+            sed -i "s/^tc-grps[[:space:]]*=.*/tc-grps = System/" "$MDP_DIR/md.mdp"
+            sed -i "s/^tau_t[[:space:]]*=.*/tau_t   = 0.1/"       "$MDP_DIR/md.mdp"
+            sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t/"    "$MDP_DIR/md.mdp"
+
+            # 2. NVT
             sed -i "/^pcoupl[[:space:]]*=/ s/^/;/"          ./md.mdp
             sed -i "/^pcoupltype[[:space:]]*=/ s/^/;/"      ./md.mdp
             sed -i "/^tau_p[[:space:]]*=/ s/^/;/"           ./md.mdp
             sed -i "/^ref_p[[:space:]]*=/ s/^/;/"           ./md.mdp
             sed -i "/^compressibility[[:space:]]*=/ s/^/;/" ./md.mdp
-
-            # 1. Single coupling group (GROMACS 2025 requires this with deform)
-            sed -i "s/^tc-grps[[:space:]]*=.*/tc-grps = System/" "$MDP_DIR/md.mdp"
-            sed -i "s/^tau_t[[:space:]]*=.*/tau_t   = 0.1/"       "$MDP_DIR/md.mdp"
-
-            # test
-            ref_t_single="${ref_t%% *}"
-            sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t_single/" "$MDP_DIR/md.mdp"
-
-            #sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t/"    "$MDP_DIR/md.mdp"
-
+            
             cat >> ./md.mdp << EOF
 ; Flow
 ; velocity [nm/ps]
