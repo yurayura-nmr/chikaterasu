@@ -417,7 +417,7 @@ void MainWindow::setupUI()
     m_posIonsSpin->setValue(0);
     m_negIonsSpin = new QSpinBox;
     m_negIonsSpin->setRange(0, 500);
-    m_negIonsSpin->setValue(2);
+    m_negIonsSpin->setValue(0);
     manualForm->addRow("Positive ions:", m_posIonsSpin);
     manualForm->addRow("Negative ions:", m_negIonsSpin);
     m_ionStack->addWidget(manualPage);
