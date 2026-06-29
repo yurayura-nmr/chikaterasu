@@ -484,10 +484,10 @@ do
             echo "[Chikaterasu] Shear flow enabled, rate=$shear_rate nm/ps"
 
             # 1. Single coupling group (GROMACS 2025 requires this with deform)
-            sed -i "s/^tc-grps[[:space:]]*=.*/tc-grps = System/" "$MDP_DIR/md.mdp"
-            sed -i "s/^tau_t[[:space:]]*=.*/tau_t   = 0.1/"       "$MDP_DIR/md.mdp"
-            #sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t/"    "$MDP_DIR/md.mdp"
-            sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = ${ref_t%% *}/" "$MDP_DIR/md.mdp"
+            # Patch the LOCAL copy (./md.mdp) instead of the template
+            sed -i "s/^tc-grps[[:space:]]*=.*/tc-grps = System/" ./md.mdp
+            sed -i "s/^tau_t[[:space:]]*=.*/tau_t   = 0.1/"       ./md.mdp
+            sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t/"    ./md.mdp
 
             # 2. NVT
             sed -i "/^pcoupl[[:space:]]*=/ s/^/;/"          ./md.mdp
