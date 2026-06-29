@@ -40,15 +40,15 @@ debug_level=0               # Set the debug level for output verbosity. Can be p
 his_manual=false            # Manually specify histidine protonation states (set to true if required).
 enable_disres=false         # For generic DISRES-based restraints
 enable_metal_bonds=false    # For adding zn_bond.top entries
-disulfide=false             # Specify whether to account for disulfide bridges during topology generation.
-
+disulfide=false             # Will be overwritten by GUI setting if using GUI. Specify whether to account for disulfide bridges during topology generation.
+forcefield=amber99sb-ildn   # Will be overwritten by GUI setting if using GUI.
 
 # === Ion Configuration ===
 specify_salt_concentration=true  # Specify salt concentration in molar units (true), or manually count ions (false).
 salt_concentration=0.050         # Desired salt concentration (in mol/L) if specify_salt_concentration=true.
 
 pos_ions=0                  # Number of positive ions (only applicable when manually specifying ion count).
-neg_ions=2                  # Number of negative ions (only applicable when manually specifying ion count).
+neg_ions=0                  # Number of negative ions (only applicable when manually specifying ion count).
 
 magnesium=false             # If true, use Mg2+ as the positive ion; otherwise, Na+ is used by default.
 
@@ -205,13 +205,17 @@ if [ "$insert_small_molecules" = false ] ; then
     else
         # ── CLI path: original interactive behaviour ─────────────────────
         if [ "$his_manual" = true ] ; then
-            eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -his"
+            #eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -his"
+            eval "$PDB2GMX_BASE -chainsep interactive -merge interactive -his"
         elif [ "$disulfide" = true ] ; then
-            eval "$PDB2GMX_BASE -rtpres -ss"
+            #eval "$PDB2GMX_BASE -rtpres -ss"
+            eval "$PDB2GMX_BASE -ss"
         elif [ "$amber" = true ] ; then
-            eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive"
+            #eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive"
+            eval "$PDB2GMX_BASE -chainsep interactive -merge interactive"
         else
-            eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -ter"
+            #eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -ter"
+            eval "$PDB2GMX_BASE -chainsep interactive -merge interactive -ter"
         fi
     fi
 
