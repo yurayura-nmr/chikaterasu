@@ -3,9 +3,11 @@
 : '
 *************************************************************
 Chikaterasu         Version: dev
-gmx                 Version: 2025.3
+gmx                 Version: 2025.3, 2026.3 (Linux and Windows)
 
 For recent changes or issues, please refer to the GitHub repository.
+Windows: runs unchanged under Git Bash (no WSL needed). Setup notes:
+https://github.com/yurayura-nmr/chikaterasu/wiki/Running-Chikaterasu-on-Windows-(native-GROMACS---Git-Bash)
 
 Author: Erik Walinda
 Affiliation: Kyoto University, Graduate School of Medicine
@@ -34,7 +36,7 @@ protein_name="1UBQ"         # Protein or molecule to simulate. For small molecul
 nruns=1                     # Number of runs. Use 1 for testing and 10 for production-level simulations.
 
 # === Debugging Options ===
-debug_level=0               # Set the debug level for output verbosity. Can be passed as an argument (e.g., ./chikaterasu 0).
+debug_level=0               # Set the debug level for output verbosity. Can be passed as an argument (e.g., ./chikaterasu.sh 0).
 
 # === Histidine Protonation and Zn2+ Options ===
 his_manual=false            # Manually specify histidine protonation states (set to true if required).
@@ -146,7 +148,7 @@ if [ -z "$1" ]
 then
     echo "[Chikaterasu] Command line arguments are empty. Using manually set debug level $debug_level."
 else
-    echo "[Chikaterasu] Command line arugments provided. Using first argument as debug level $1."
+    echo "[Chikaterasu] Command line arguments provided. Using first argument as debug level $1."
     debug_level=$1
 fi
 
@@ -155,12 +157,10 @@ rm -rf gromacs/top
 rm -rf gromacs/solvation
 rm -rf gromacs/addions
 rm -rf gromacs/emin
-#rm -rf gromacs/mdp   # unused?
 mkdir -p gromacs/top
 mkdir -p gromacs/solvation
 mkdir -p gromacs/addions
 mkdir -p gromacs/emin
-#mkdir -p gromacs/mdp
 mkdir -p gromacs/coord
 mkdir -p runs
 mkdir -p runs/nvt
@@ -192,7 +192,7 @@ if [ "$insert_small_molecules" = false ] ; then
     PDB2GMX_BASE_NOFF="gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -ignh"
 
     if [ -n "$CHIKA_GUI" ]; then
-        # ── GUI path: no interactive flags, no -rtpres ──────────────────
+        # GUI path: no interactive flags, no -rtpres
         if [ "$his_manual" = true ] ; then
             eval "$PDB2GMX_BASE -his"
         elif [ "$disulfide" = true ] ; then
@@ -203,7 +203,7 @@ if [ "$insert_small_molecules" = false ] ; then
             eval "$PDB2GMX_BASE"
         fi
     else
-        # ── CLI path: original interactive behaviour ─────────────────────
+        # CLI path: original interactive behaviour
         if [ "$his_manual" = true ] ; then
             #eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -his"
             eval "$PDB2GMX_BASE -chainsep interactive -merge interactive -his"
@@ -239,8 +239,8 @@ if [ "$insert_small_molecules" = true ] ; then
 fi
 
 mv *.itp ../top/
-rm \#*
-rm ../top/\#*
+rm -f \#*
+rm -f ../top/\#*
 
 cd ../..
 
@@ -354,7 +354,7 @@ without DISRES.
 
 To enable restraints:
 1. Prepare "distance_restraints.itp"
-2. Set distance_restraints=true in chikaterasu.sh
+2. Set enable_disres=true in chikaterasu.sh
 3. Ensure the chika_mdp files contain:
 
 NVT / NPT:
@@ -478,11 +478,6 @@ do
 
         cp ../../chika_mdp/md.mdp ./md.mdp
 
-        # 3. MD
-        cd runs/md
-
-        cp ../../chika_mdp/md.mdp ./md.mdp
-
         # === Patch shear flow into this run's md.mdp copy only ===
         if [ "$shear_enabled" = "true" ]; then
             echo "[Chikaterasu] Shear flow enabled, rate=$shear_rate nm/ps"
@@ -537,4 +532,4 @@ EOF
         echo [Chikaterasu] Run $i finished. Yay!
 done
 
-exit 1
+exit 0 
