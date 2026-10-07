@@ -384,18 +384,88 @@ do
   : '
   *************************************************************
   Contact map
-  Untested
+  Mean smallest distance between residue pairs (gmx mdmat),
+  drawn as a colour EPS (+ PDF/PNG if tools are available).
+  Heavy atoms of the whole molecule are used (Protein-H / DNA).
+  Output: contact_map/contact_map.eps  (data: dm.xpm, dmdm.xvg)
   *************************************************************
   '
   if [ "$contactmap" = true ] ; then
-      cd contact_map 
-
-      # Make xpm file
-      printf "MainChain+H" | gmx mdmat -f ../md_target.xtc -s ../md_target.tpr -dt $dt
-      
-      # Convert to eps for viewing
-      gmx xpm2ps -f dm.xpm
-                          
+      printf "\n************** Contact Map Analysis *************\n\n"
+      cd contact_map
+ 
+      if [ "$dna" = true ] ; then
+          cm_group="DNA"
+      else
+          cm_group="Protein-H"
+      fi
+ 
+      # Mean smallest distance between residues -> dm.xpm
+      # md_fit.xtc is used (PBC removed, same frames as other analyses)
+      printf "$cm_group\n" | gmx mdmat -f ../md_fit.xtc -s ../md_target.tpr -mean dm.xpm -no dmdm.xvg \
+                                      -t ${cm_cutoff:-1.0} -nlevels ${cm_levels:-50} -b $anatime -dt $dt
+ 
+      # Colour EPS. -rainbow converts the white end of the scale to blue/red
+      # and fills in a rainbow in between (publication-style look).
+      gmx xpm2ps -f dm.xpm -o contact_map.eps -rainbow ${cm_rainbow:-blue} \
+                 -title none -legend both -diag none -bx 8 -by 8
+ 
+      # PNG + PDF via a small python helper (needs python with numpy + matplotlib).
+      # Reads dm.xpm directly; no extra GROMACS tools or ghostscript needed.
+      cat > xpm2png.py <<'PYEOF'
+import re, sys
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+ 
+xpm, out, vmax = sys.argv[1], sys.argv[2], float(sys.argv[3])
+lines = open(xpm).read().splitlines()
+ 
+# colour code -> value, from the legend lines:  "A  c #FFFFFF " /* "0.5" */
+code2val = {}
+xaxis, yaxis, rows = [], [], []
+for ln in lines:
+    m = re.match(r'\s*"(.+?)\s+c\s+#\w+\s*"\s*/\*\s*"([^"]*)"', ln)
+    if m:
+        try: code2val[m.group(1)] = float(m.group(2))
+        except ValueError: pass
+        continue
+    m = re.match(r'\s*/\*\s*([xy])-axis:\s*(.*?)\s*\*/', ln)
+    if m:
+        vals = [float(v) for v in m.group(2).split()]
+        (xaxis if m.group(1) == "x" else yaxis).extend(vals)
+        continue
+    m = re.match(r'\s*"([^"]+)"\s*,?\s*$', ln)
+    if m and len(m.group(1).split()) == 1:
+        rows.append(m.group(1))
+ 
+# first token of the "W H ncolors cpp" line is not a data row; drop it
+w = len(rows[-1])
+rows = [r for r in rows if len(r) == w]
+cpp = len(next(iter(code2val)))
+data = np.array([[code2val.get(r[i:i+cpp], np.nan) for i in range(0, len(r), cpp)]
+                 for r in rows])                      # first row = top (largest y)
+ 
+x0, x1 = (xaxis[0], xaxis[-1]) if xaxis else (0, data.shape[1])
+y0, y1 = (yaxis[0], yaxis[-1]) if yaxis else (0, data.shape[0])
+fig, ax = plt.subplots(figsize=(7, 6))
+im = ax.imshow(data, origin="upper", cmap="RdYlBu", vmin=0, vmax=vmax,
+               extent=[x0 - .5, x1 + .5, y0 - .5, y1 + .5], interpolation="nearest")
+ax.set_xlabel("Residue"); ax.set_ylabel("Residue")
+fig.colorbar(im, ax=ax, label="Mean smallest distance (nm)")
+fig.tight_layout()
+fig.savefig(out + ".png", dpi=300)
+fig.savefig(out + ".pdf")
+PYEOF
+      pycmd=""
+      if command -v python3 >/dev/null 2>&1 ; then pycmd=python3 ; elif command -v python >/dev/null 2>&1 ; then pycmd=python ; fi
+      if [ -n "$pycmd" ] ; then
+          $pycmd xpm2png.py dm.xpm contact_map ${cm_cutoff:-1.0} || echo "[Chikaterasu] contact map PNG failed (python/matplotlib missing?)"
+      else
+          echo "[Chikaterasu] python not found - only contact_map.eps was written."
+      fi
+ 
       cd ..
   fi
 

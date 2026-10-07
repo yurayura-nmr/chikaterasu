@@ -40,3 +40,8 @@ runs/nvt/nvt.tpr
 runs/nvt/nvt.trr
 runs/nvt/nvt_prev.cpt
 runs/nvt/temperature.xvg
+gromacs/coord/7F0N.pdb
+gromacs/solvation/7F0N.pdb_newbox.gro
+gromacs/solvation/7F0N.pdb_solv.gro
+gromacs/top/7F0N.pdb_processed.gro
+gromacs/addions/7F0N.pdb_solv_ions.gro
