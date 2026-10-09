@@ -1,0 +1,547 @@
+#!/bin/bash
+
+: '
+*************************************************************
+chikaterasu_windebug.sh  (Windows / Git Bash debug variant)
+
+Purpose: records the working invocation for native gmx.exe under
+Git Bash (mintty). Interactive pdb2gmx prompts (-ss, -chainsep,
+-merge, -ter, -his) do not show up and the run appears to hang,
+because gmx.exe does not see a real terminal.
+Fix: prefix interactive gmx calls with `winpty`.
+
+Differences from chikaterasu.sh: winpty added to PDB2GMX_BASE and
+PDB2GMX_BASE_NOFF only.
+Do not use winpty for piped calls (printf ... | gmx ...); those
+already work without it.
+Tested: GROMACS 2026.3, Git Bash on Windows, disulfide=true.
+
+TODO: Merge into chikaterasu.sh and delete this variant. Add an OS
+check so winpty is used only on Git Bash and Linux runs are unchanged:
+    GMX_TTY=""
+    case "$(uname -s)" in MINGW*|MSYS*)
+        command -v winpty >/dev/null 2>&1 && GMX_TTY="winpty" ;; esac
+    PDB2GMX_BASE="$GMX_TTY gmx pdb2gmx -f ..."
+Until then, keep the two files in sync by hand (diff them first).
+*************************************************************
+'
+
+: '
+*************************************************************
+Manual Parameter Setup for Current Run
+Note: Most parameters are configured via .mdp files in chika_mdp/.
+The starting PDB file must be placed in the gromacs/coord directory.
+
+Debug Level Options:
+0   Full production MD run (NPT); no debug output
+1   Topology generation (pdb2gmx)
+2   Solvation step
+3   Addition of counterions and distance restraints
+4   Energy minimization
+5   NVT equilibration completed
+6   NPT equilibration completed
+*************************************************************
+'
+
+# === Simulation Configuration ===
+protein_name="WT_UbAB_forMD"         # Protein or molecule to simulate. For small molecule simulations, use the appropriate file (e.g., ATP.pdb).
+nruns=1                     # Number of runs. Use 1 for testing and 10 for production-level simulations.
+
+# === Debugging Options ===
+debug_level=0               # Set the debug level for output verbosity. Can be passed as an argument (e.g., ./chikaterasu.sh 0).
+
+# === Histidine Protonation and Zn2+ Options ===
+his_manual=false            # Manually specify histidine protonation states (set to true if required).
+enable_disres=false         # For generic DISRES-based restraints
+enable_metal_bonds=false    # For adding zn_bond.top entries
+disulfide=true              # Will be overwritten by GUI setting if using GUI. Specify whether to account for disulfide bridges during topology generation.
+forcefield=amber99sb-ildn   # Will be overwritten by GUI setting if using GUI. Comment this out for interactive option (-ff)
+
+# === Ion Configuration ===
+specify_salt_concentration=true  # Specify salt concentration in molar units (true), or manually count ions (false).
+salt_concentration=0.050         # Desired salt concentration (in mol/L) if specify_salt_concentration=true.
+
+pos_ions=0                  # Number of positive ions (only applicable when manually specifying ion count).
+neg_ions=0                  # Number of negative ions (only applicable when manually specifying ion count).
+
+magnesium=false             # If true, use Mg2+ as the positive ion; otherwise, Na+ is used by default.
+
+# === Box Shape and Simulation Setup ===
+# Choose one of the following simulation scenarios:
+# a) Protein-only simulation:
+#    Set insert_small_molecules=false
+# b) Small molecule-only simulation:
+#    Set insert_small_molecules=true
+# c) Protein with small molecules:
+#    Set insert_small_molecules=true and protein_with_small_molecules=true
+
+# Define simulation box dimensions for molecule insertion 
+# Must set box_dim when working with inserting molecules
+insert_small_molecules=false       # If we want to simulate small molecules like ATP or sialic acid
+insert_small_molecules_number=2
+
+# Define whether to include a protein with small molecules
+protein_with_small_molecules=false
+protein_added_small_molecule_name="ATP"  # Name of the small molecule to be inserted alongside the protein (file must be in the gromacs/coord directory)
+
+# Specify box configuration options
+amber=false                 # For N-/C-terminus. False for CHARMM36m etc.
+box_manual=false            # Enable manual specification of the box size
+box_empty=false             # Set to true for a water-only simulation (no solute)
+
+# Manually specified box dimensions (used if box_manual=true). 
+# Box dimensions (in nm) should accommodate the solute, especially for rheological MD or hydrodynamics simulations. 
+# Ensure no periodic boundary condition (PBC) artifacts.
+box_dim="    7.845   6.497   6.363 "  
+cell_shape="triclinic"      # Available shapes: triclinic, cubic, dodecahedron, octahedron
+
+# --- Water Model Configuration ---
+# Specify the water model to be used in the simulation.
+# Available options: spce, spc, tip3p, tip4p, tip5p, ...
+# (For TIP4P-2005, set `water="tip4p"` and manually replace the corresponding .itp file.)
+# Note: For rheological MD (rheoMD) simulations, use the SPCE water model ("spce" / "spc216.gro").
+# TIP4P-based models are known to exhibit instability and may lead to simulation crashes under shear conditions.
+water="tip4p"      
+#water_file="tip4p.gro"
+
+: '
+*************************************************************
+No further modifications should be needed beyond this point.
+
+Setting up directories for the run.
+*************************************************************
+'
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# If the file exists, print the message AND source the file
+[ -f "$SCRIPT_DIR/chika_gui.conf" ] && {
+    echo "[Chikaterasu] Found chika_gui.conf. Taking parameters from the GUI-written file."
+    source "$SCRIPT_DIR/chika_gui.conf"
+}
+
+# === Derive water_file from water model ===
+case "$water" in
+    tip4p)  water_file="tip4p.gro" ;;
+    tip5p)  water_file="tip5p.gro" ;;
+    *)      water_file=""         ;;   # tip3p, spc, spce, none → use gmx default
+esac
+
+# === Patch MDP files from GUI parameters ===
+if [ -n "$CHIKA_GUI" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+    REPO_ROOT="$(cd "$SCRIPT_DIR" && pwd)"
+    MDP_DIR="$REPO_ROOT/chika_mdp"
+
+    nsteps=$(awk "BEGIN {printf \"%d\", $sim_time_ns * 500000}")
+
+    sed -i "s/^nsteps[[:space:]]*=.*/nsteps  = $nsteps/" "$MDP_DIR/md.mdp"
+    sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/md.mdp"
+    sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/nvt.mdp"
+    sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t   $ref_t/" "$MDP_DIR/npt.mdp"
+    sed -i "s/^gen_temp[[:space:]]*=.*/gen_temp = $ref_t/" "$MDP_DIR/nvt.mdp"
+fi
+
+
+if [ -d "./runs" ]; then
+    echo "[Chikaterasu] Warning: './runs' directory already exists."
+    echo "[Chikaterasu] This suggests a previous run was initiated here."
+    echo "[Chikaterasu] While this is usually harmless, it could lead to potential artifacts."
+    echo "[Chikaterasu] For example, errors that should have caused the simulation to crash"
+    echo "[Chikaterasu] might be bypassed if existing data from a previous run is used."
+    echo "[Chikaterasu] This could happen if an entire simulation was copied or moved"
+    echo "[Chikaterasu] to this folder for a fresh run."
+    #exit 1 # Optional: uncomment to force an exit if folder exists (untested)
+else
+    echo "[Chikaterasu] No existing './runs' directory found. Starting a fresh run."
+fi
+
+if [ -z "$1" ]
+then
+    echo "[Chikaterasu] Command line arguments are empty. Using manually set debug level $debug_level."
+else
+    echo "[Chikaterasu] Command line arguments provided. Using first argument as debug level $1."
+    debug_level=$1
+fi
+
+mkdir -p gromacs
+rm -rf gromacs/top
+rm -rf gromacs/solvation
+rm -rf gromacs/addions
+rm -rf gromacs/emin
+mkdir -p gromacs/top
+mkdir -p gromacs/solvation
+mkdir -p gromacs/addions
+mkdir -p gromacs/emin
+mkdir -p gromacs/coord
+mkdir -p runs
+mkdir -p runs/nvt
+mkdir -p runs/npt
+mkdir -p runs/md
+mkdir -p custom_analysis
+
+: '
+*************************************************************
+[pdb2gmx]
+Generate topology and position restraints
+*************************************************************
+'
+
+cd gromacs/coord
+
+# Check if user-defined file exists. Exit if file not found.
+if [ ! -e $protein_name.pdb ]; then
+    echo "[Chikaterasu] PDB input file does not exist in ./gromacs/coord/ folder. Exiting!"
+    exit 2
+  else
+    echo "[Chikaterasu] Found PDB input file. Will now convert to gromacs format."
+fi
+
+if [ "$insert_small_molecules" = false ] ; then
+
+    # === Build the base command ===
+    PDB2GMX_BASE="winpty gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -ff $forcefield -ignh"
+    PDB2GMX_BASE_NOFF="winpty gmx pdb2gmx -f $protein_name.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -ignh"
+
+    if [ -n "$CHIKA_GUI" ]; then
+        # GUI path: no interactive flags, no -rtpres
+        if [ "$his_manual" = true ] ; then
+            eval "$PDB2GMX_BASE -his"
+        elif [ "$disulfide" = true ] ; then
+            eval "$PDB2GMX_BASE -ss"
+        elif [ "$amber" = true ] ; then
+            eval "$PDB2GMX_BASE"
+        else
+            eval "$PDB2GMX_BASE"
+        fi
+    else
+        # CLI path: original interactive behaviour
+        if [ "$his_manual" = true ] ; then
+            #eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -his"
+            eval "$PDB2GMX_BASE -chainsep interactive -merge interactive -his"
+        elif [ "$disulfide" = true ] ; then
+            #eval "$PDB2GMX_BASE -rtpres -ss"
+            eval "$PDB2GMX_BASE -ss"
+        elif [ "$amber" = true ] ; then
+            #eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive"
+            eval "$PDB2GMX_BASE -chainsep interactive -merge interactive"
+        else
+            #eval "$PDB2GMX_BASE -chainsep interactive -rtpres -merge interactive -ter"
+            eval "$PDB2GMX_BASE -chainsep interactive -merge interactive -ter"
+        fi
+    fi
+
+fi
+
+# Case b: only small molecule simulation, no protein
+# insert_small_molecules=true
+
+if [ "$insert_small_molecules" = true ] ; then
+    if [ "$protein_with_small_molecules" = false ]; then
+        echo "" > empty.pdb
+        gmx insert-molecules -f empty.pdb -ci $protein_name.pdb -o teibunshibox.pdb -nmol $insert_small_molecules_number -box $box_dim
+        gmx pdb2gmx -f teibunshibox.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
+    fi
+
+    # New: Case c: small molecule and protein. Add molecule to a copy for the initial protein file.
+    if [ "$protein_with_small_molecules" = true ]; then
+        gmx insert-molecules -f $protein_name.pdb -ci $protein_added_small_molecule_name.pdb -o protein_with_added_molecules.pdb -nmol $insert_small_molecules_number -box $box_dim
+        gmx pdb2gmx -f protein_with_added_molecules.pdb -o ../top/$protein_name.pdb_processed.gro -p ../top/topol.top -water $water -chainsep interactive -ignh -rtpres -merge interactive
+    fi
+fi
+
+mv *.itp ../top/
+rm -f \#*
+rm -f ../top/\#*
+
+cd ../..
+
+if [ "$debug_level" = 1 ] ; then
+    echo "[Chikaterasu] Debug level 1 set. Exiting after initial topology generation [pdb2gmx]"
+    exit 1
+fi
+
+
+: '
+*************************************************************
+Solvate the protein 
+If defined set the box dimensions manually
+
+Gromacs will print a warning starting with:
+[WARNING: Masses and atomic (Van der Waals) radii will be guessed ...]
+... but that is fine.
+See: https://www.researchgate.net/post/MD-simulation-using-gromacs-using-the-command-gmx-solvate
+*************************************************************
+'
+
+cd gromacs/solvation
+
+gmx editconf -f ../top/$protein_name.pdb_processed.gro -o ./$protein_name.pdb_newbox.gro -c -d 1.0 -bt $cell_shape
+
+if [ "$box_manual" = true ] ; then
+    sed -i '$ d' $protein_name.pdb_newbox.gro 
+    echo "$box_dim" >> $protein_name.pdb_newbox.gro
+fi
+
+if [ "$box_empty" = true ] ; then
+    echo "WATER" > $protein_name.pdb_newbox.gro
+    echo " 0" >> $protein_name.pdb_newbox.gro
+    echo "$box_dim" >> $protein_name.pdb_newbox.gro
+fi
+
+#gmx solvate -cp ./$protein_name.pdb_newbox.gro -cs $water_file -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+
+echo "[Chikaterasu] water=$water water_file=$water_file"
+
+if [ -n "$water_file" ]; then
+    gmx solvate -cp ./$protein_name.pdb_newbox.gro -cs $water_file -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+else
+    gmx solvate -cp ./$protein_name.pdb_newbox.gro -o ./$protein_name.pdb_solv.gro -p ../top/topol.top
+fi
+
+
+cd ../..
+
+if [ "$debug_level" = 2 ] ; then
+    echo "[Chikaterasu] Debug level 2 set. Exiting after solvation."
+    exit 1
+fi
+
+: '
+*************************************************************
+Add ions
+
+On some builds GROMACS will complain that charge is not neutral.
+Although the charge is like 0.0000001. So it might be a precision
+issue. But of course we want to neutralize it.
+The maxwarn flag helps in such a case. Otherwise, recompile
+and hope for better results. Just make sure the topology
+of the system is neutral at the end.
+*************************************************************
+'
+
+cd gromacs/addions
+cp ../../chika_mdp/ions.mdp ./ions.mdp
+
+gmx grompp -f ./ions.mdp -c ../solvation/$protein_name.pdb_solv.gro -p ../top/topol.top -o ./ions.tpr -maxwarn 1
+#exit 1
+
+if [ "$specify_salt_concentration" = true ] ; then
+    if [ "$magnesium" = false ] ; then
+        printf "SOL" | gmx genion -s ions.tpr -o $protein_name.pdb_solv_ions.gro -p ../top/topol.top -conc $salt_concentration -neutral
+    fi
+    if [ "$magnesium" = true ] ; then
+        printf "SOL" | gmx genion -s ions.tpr -o $protein_name.pdb_solv_ions.gro -p ../top/topol.top -conc $salt_concentration -neutral -pname MG -nname CL
+        #exit 1
+    fi
+fi
+
+if [ "$specify_salt_concentration" = false ] ; then
+    if [ "$magnesium" = false ] ; then
+        printf "SOL" | gmx genion -s ions.tpr -o $protein_name.pdb_solv_ions.gro -p ../top/topol.top -pname NA -nname CL -np $pos_ions -nn $neg_ions
+    fi
+    if [ "$magnesium" = true ] ; then
+        printf "SOL" | gmx genion -s ions.tpr -o $protein_name.pdb_solv_ions.gro -p ../top/topol.top -pname MG -nname CL -np $pos_ions -nn $neg_ions
+    fi
+fi
+
+cd ../..
+
+if [ "$debug_level" = 3 ] ; then
+    echo "[Chikaterasu] Debug level 3 set. Exiting after adding counterions."
+    exit 1
+fi
+
+: '
+*************************************************************
+Optional distance restraints
+
+Distance restraints can be used to guide specific atom–atom
+distances (e.g., to maintain a known coordination geometry,
+keep two domains near each other, or restrain a ligand).
+
+They are *not required* for metal coordination if explicit
+bonds (e.g., Zn–Sγ) are defined. Zn sites remain stable even
+without DISRES.
+
+To enable restraints:
+1. Prepare "distance_restraints.itp"
+2. Set enable_disres=true in chikaterasu.sh
+3. Ensure the chika_mdp files contain:
+
+NVT / NPT:
+    define = -DPOSRES -DDISRES
+    disre  = simple
+
+MD:
+    define = -DDISRES
+    disre  = simple
+
+Always verify that atom indices in distance_restraints.itp
+match the final topology after protonation, CYM conversion,
+and hydrogen addition.
+*************************************************************
+'
+
+if [ "$enable_disres" = true ] ; then
+    cd gromacs/top
+    cp ../../distance_restraints.itp ./
+
+    if [[ ! -f ./distance_restraints.itp ]] ; then
+        echo "[Chikaterasu] ERROR: distance_restraints.itp not found."
+        exit 1
+    fi
+
+    # Insert DISRES include block
+    sed -i '/Include Position restraint file/a ; Include distance restraints\n#ifdef DISRES\n#include "./distance_restraints.itp"\n#endif\n; Include Position restraint file' topol.top
+
+    cd ../..
+
+    echo "[Chikaterasu] Added distance_restraints.itp to topol.top (wrapped in #ifdef DISRES)."
+    echo "[Chikaterasu] Reminder: DISRES restraints only apply if your MDP includes:"
+    echo "              define = -DDISRES"
+    echo "[Chikaterasu] Make sure atom indices in distance_restraints.itp match the final topology."
+
+    read -p "[Chikaterasu] DISRES is ON. Continue?" dummy
+fi
+
+if [ "$enable_metal_bonds" = true ] ; then
+    if [[ ! -f ./zn_bond.top ]] ; then
+        echo "[Chikaterasu] ERROR: zn_bond.top not found in base directory."
+        exit 1
+    fi
+
+    # Insert the metal–protein bond definitions before [ pairs ]
+    sed -i "/\[ pairs ]/i $(sed ':a;N;$!ba;s/\n/\\n/g' zn_bond.top)" gromacs/top/topol.top
+
+    echo "[Chikaterasu] Metal coordination bonds appended to topol.top (via zn_bond.top)."
+    echo "[Chikaterasu] These are *explicit bonded interactions* and do not require DISRES."
+    echo "[Chikaterasu] Verify bond lengths and force constants if using ions other than Zn2+."
+
+    read -p "[Chikaterasu] Metal coordination bonds inserted. Continue?" dummy
+fi
+
+: '
+*************************************************************
+Energy minimization
+*************************************************************
+'
+
+cd gromacs/emin
+cp ../../chika_mdp/minim.mdp ./minim.mdp
+
+gmx grompp -f ./minim.mdp -c ../addions/$protein_name.pdb_solv_ions.gro -p ../top/topol.top -o em.tpr -maxwarn 1
+gmx mdrun -v -deffnm em
+
+printf "Potential" | gmx energy -f em.edr -o ./potential.xvg
+
+cd ../..
+
+if [ "$debug_level" = 4 ] ; then
+    echo "[Chikaterasu] Debug level 4 set. Exiting after energy minimization."
+    exit 1
+fi
+
+: '
+*************************************************************
+Start the MD loop
+*************************************************************
+'
+
+for i in `seq 1 $nruns`;
+
+do
+        # 1. NVT
+        # NVT also generates a warning in the newer gromacs versions like this:
+        #     Removing center of mass motion in the presence of position restraints
+        #     might cause artifacts. When you are using position restraints to
+        #     equilibrate a macro-molecule, the artifacts are usually negligible.
+        # I never saw any problems here and gromacs also thinks it is fine like this.
+        cd runs/nvt
+        cp ../../chika_mdp/nvt.mdp ./nvt.mdp
+
+        gmx grompp -f ./nvt.mdp -c ../../gromacs/emin/em.gro -r ../../gromacs/emin/em.gro -p ../../gromacs/top/topol.top -o nvt.tpr -maxwarn 1
+        gmx mdrun -deffnm nvt -nb gpu -v
+
+        if [ "$debug_level" = 5 ] ; then
+            echo "[Chikaterasu] Debug level 5 set. Exiting after NVT equilibration."
+            exit 1
+        fi
+
+        printf "Temperature" | gmx energy -f nvt.edr -o ./temperature.xvg
+        cd ../..
+
+        # 2. NPT
+        cd runs/npt
+        cp ../../chika_mdp/npt.mdp ./npt.mdp
+
+        gmx grompp -f ./npt.mdp -c ../nvt/nvt.gro -r ../nvt/nvt.gro -t ../nvt/nvt.cpt -p ../../gromacs/top/topol.top -o npt.tpr -maxwarn 1
+        gmx mdrun -deffnm npt -nb gpu -v
+
+        if [ "$debug_level" = 6 ] ; then
+            echo "[Chikaterasu] Debug level 6 set. Exiting after NPT equilibration."
+            exit 1
+        fi
+
+        cd ../..
+
+        # 3. MD
+        cd runs/md
+
+        cp ../../chika_mdp/md.mdp ./md.mdp
+
+        # === Patch shear flow into this run's md.mdp copy only ===
+        if [ "$shear_enabled" = "true" ]; then
+            echo "[Chikaterasu] Shear flow enabled, rate=$shear_rate nm/ps"
+
+            # 1. Single coupling group (GROMACS 2025 requires this with deform)
+            # Patch the LOCAL copy (./md.mdp) instead of the template
+            sed -i "s/^tc-grps[[:space:]]*=.*/tc-grps = System/" ./md.mdp
+            sed -i "s/^tau_t[[:space:]]*=.*/tau_t   = 0.1/"       ./md.mdp
+            sed -i "s/^ref_t[[:space:]]*=.*/ref_t   = $ref_t/"    ./md.mdp
+
+            # 2. NVT
+            sed -i "/^pcoupl[[:space:]]*=/ s/^/;/"          ./md.mdp
+            sed -i "/^pcoupltype[[:space:]]*=/ s/^/;/"      ./md.mdp
+            sed -i "/^tau_p[[:space:]]*=/ s/^/;/"           ./md.mdp
+            sed -i "/^ref_p[[:space:]]*=/ s/^/;/"           ./md.mdp
+            sed -i "/^compressibility[[:space:]]*=/ s/^/;/" ./md.mdp
+
+            cat >> ./md.mdp << EOF
+; Flow
+; velocity [nm/ps]
+; NOTE spce water appears the most stable for shear-simulations.
+deform           = 0 0 0 0 0 $shear_rate
+deform-init-flow = yes
+EOF
+        fi
+
+        gmx grompp -f ./md.mdp -c ../npt/npt.gro -t ../npt/npt.cpt -p ../../gromacs/top/topol.top -o md.tpr -maxwarn 1
+
+        # Note (2022-05-09): When running rheological (shear-flow) MD simulations using the `mdrun -deform` option,
+        # certain systems may exhibit issues with Thread-MPI optimization. In such cases, using the fallback command
+        # below resolves the problem, though it disables multi-thread optimization:
+        #   gmx mdrun -deffnm md -ntmpi 1 -v
+        # For most modern hardware, the standard command works as expected.
+        gmx mdrun -deffnm md -nb gpu -v
+
+        cd ../..
+
+        # Copy the data
+        mkdir -p runs/md_$i
+        mkdir -p runs/nvt_$i
+        mkdir -p runs/npt_$i
+        
+        mv runs/md/* runs/md_$i/
+        mv runs/nvt/* runs/nvt_$i/
+        mv runs/npt/* runs/npt_$i/
+        
+        mkdir -p runs/md
+        mkdir -p runs/nvt
+        mkdir -p runs/npt
+ 
+        # End the run
+        echo [Chikaterasu] Run $i finished. Yay!
+done
+
+exit 0 
