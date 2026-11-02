@@ -306,6 +306,7 @@ do
           printf "C-alpha\n" | gmx rmsf -s md_target.tpr -f ./md_fit.xtc -o ./rmsf/rmsf.xvg -fit -res -b $anatime
       fi
       if [ "$indexFileProvided" = true ] ; then
+          printf "[Chikaterasu] Using index file (chika.ndx). Expect 1 group prompt (RMSF) for each of the %s chains.\n\n" "$nchains"
           for j in `seq 1 $nchains`;
           do
               gmx rmsf -s md_target.tpr -f ./md_fit.xtc -o ./rmsf/selected_region_rmsf_$j.xvg -n ../../chika.ndx -fit -res -b $anatime
