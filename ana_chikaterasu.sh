@@ -37,7 +37,6 @@ on_the_fly=false    # analyze a currently active run or a run that has been abor
 rmsd=true
 rmsf=true
 traj=true
-dt=10               # time interval for various analysis functions [ps]. E.g. traj, hbond
 vmd=false           # Creates a folder vmd with ready-to-use gro/xtc file for viewing in VMD or to start a new universe in MDAnalysis
 gyration=false      # Calculate radius of gyration
 hbond=false         # Analyze hydrogen bonding pattern
@@ -46,8 +45,6 @@ sasa=false
 pca=false
 contactmap=false    # Draw contact map (mean-smallest-distance map)
 dipole=false
-mu=2.273            # Dipole moment of water. spc: 2.273 | tip4p/2005: 2.38
-
 
 hbond_ATP=false     # Custom function for ATP research; have to specify group number "13" instead of name "ATP" bug?
 domain_angle=false  # Custom function for diUb research
@@ -57,6 +54,10 @@ signedPaxis=false   # Do we want to get the signed vector of the principal axis?
 
 dssp=false
 indexFileProvided=false  # Are you providing a file with the atom numbers for analysis? [chika.ndx]
+
+dt=10               # time interval for various analysis functions     [ps] e.g. rms, rmsf, hbond
+traj_dt=1000        # time interval for functions producing huge files [ps] e.g. traj
+mu=2.273            # Dipole moment of water. spc: 2.273 | tip4p/2005: 2.38
 
 : '
 *************************************************************
@@ -283,6 +284,7 @@ do
           printf "C-alpha\nC-alpha" | gmx rms -s md_target.tpr -f ./md_fit.xtc -o ./rmsd/rmsd.xvg -fit rot+trans
       fi
       if [ "$indexFileProvided" = true ] ; then
+          printf "[Chikaterasu] Using index file (chika.ndx). Expect 2 group prompts (fit, RMSD) for each of the %s chains.\n\n" "$nchains"
           for k in `seq 1 $nchains`;
           do
               gmx rms -s md_target.tpr -f ./md_fit.xtc -o ./rmsd/selected_region_rmsd_$k.xvg -n ../../chika.ndx -fit rot+trans
@@ -320,7 +322,7 @@ do
   *************************************************************
   '
   if [ "$traj" = true ] ; then
-      printf "System" | gmx trjconv -f md_fit.xtc -s md_target.tpr -o ./traj/traj.pdb -dt $dt # -pbc mol -pbc nojump
+      printf "System" | gmx trjconv -f md_fit.xtc -s md_target.tpr -o ./traj/traj.pdb -dt $traj_dt # -pbc mol -pbc nojump
   fi
 
   : '
