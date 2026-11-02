@@ -493,15 +493,10 @@ PYEOF
   DSSP
   *************************************************************
   '
+  printf "\n************** DSSP (Secondary Structure) Analysis *************\n\n"
   if [ "$dssp" = true ] ; then
-      cd dssp
-      if [ "$indexFileProvided" = false ] ; then
-          gmx do_dssp -s ../md_target.tpr -f ../md_fit.xtc -b $anatime 
-      fi
-      if [ "$indexFileProvided" = true ] ; then
-          gmx do_dssp -s ../md_target.tpr -f ../md_fit.xtc -n ../../../chika.ndx  -b $anatime 
-      fi
-      #exit 1
+      cd dssp      
+      gmx dssp -s ../md_target.tpr -f ../md_fit.xtc -b $anatime      
       cd ..
   fi
 
@@ -535,7 +530,17 @@ PYEOF
   *************************************************************
   '
   if [ "$sasa" = true ] ; then
-      printf "Protein\n" | gmx sasa -s md_target.tpr -f md_fit.xtc -or sasa/sasa_by_residue.xvg -oa sasa/sasa_by_atom.xvg -b $anatime 
+      if [ "$indexFileProvided" = false ] ; then
+          printf "Protein\n" | gmx sasa -s md_target.tpr -f md_fit.xtc -or sasa/sasa_by_residue.xvg -oa sasa/sasa_by_atom.xvg -b $anatime
+      fi
+      if [ "$indexFileProvided" = true ] ; then
+          printf "[Chikaterasu] Using index file (chika.ndx). Expect 1 selection prompt (surface) for each of the %s chains.\n\n" "$nchains"
+          for j in `seq 1 $nchains`;
+          do
+              printf "[Chikaterasu] Chain %s: enter group %s (index groups are numbered from 0).\n\n" "$j" "$((j-1))"
+              gmx sasa -s md_target.tpr -f md_fit.xtc -n ../../chika.ndx -or sasa/sasa_by_residue_$j.xvg -oa sasa/sasa_by_atom_$j.xvg -b $anatime
+          done
+      fi
   fi
   
   : '
@@ -581,18 +586,36 @@ PYEOF
   : '
   if [ "$pca" = true ] ; then
       echo "[ Chikaterasu ] PCA analysis will take a while ..."
-      echo "[ Chikaterasu ] 1. Building covariance matrix ..."
-      
-      printf "Backbone\nBackbone" | gmx covar -s md_target.tpr -f md_fit.xtc -o pca/eigenval.xvg -av pca/average.pdb -b $anatime
-      
-      echo "[ Chikaterasu ] 2. Analyze first three eigenvectors ..."
-      printf "Backbone\nBackbone" | gmx anaeig -s md_target.tpr -f md_fit.xtc -first 1 -last 3 -extr pca/extreme_pcavec.pdb -nframes 30 -entropy
-              
-      echo "[ Chikaterasu ] 3. Plot first 3 PCA vectors as 2D maps ..."
-      printf "Backbone\nBackbone" | gmx anaeig -s md_target.tpr -f md_fit.xtc -2d pca/2dproj_12.xvg -first 1 -last 2
-      printf "Backbone\nBackbone" | gmx anaeig -s md_target.tpr -f md_fit.xtc -2d pca/2dproj_13.xvg -first 1 -last 3
-      
-      #exit 1 # tested OK
+
+      if [ "$indexFileProvided" = false ] ; then
+          echo "[ Chikaterasu ] 1. Building covariance matrix ..."
+          printf "Backbone\nBackbone" | gmx covar -s md_target.tpr -f md_fit.xtc -o pca/eigenval.xvg -av pca/average.pdb -b $anatime
+
+          echo "[ Chikaterasu ] 2. Analyze first three eigenvectors ..."
+          printf "Backbone\nBackbone" | gmx anaeig -s md_target.tpr -f md_fit.xtc -first 1 -last 3 -extr pca/extreme_pcavec.pdb -nframes 30 -entropy
+
+          echo "[ Chikaterasu ] 3. Plot first 3 PCA vectors as 2D maps ..."
+          printf "Backbone\nBackbone" | gmx anaeig -s md_target.tpr -f md_fit.xtc -2d pca/2dproj_12.xvg -first 1 -last 2
+          printf "Backbone\nBackbone" | gmx anaeig -s md_target.tpr -f md_fit.xtc -2d pca/2dproj_13.xvg -first 1 -last 3
+      fi
+
+      if [ "$indexFileProvided" = true ] ; then
+          printf "[Chikaterasu] Using index file (chika.ndx). Running PCA for each of the %s chains (groups auto-selected).\n\n" "$nchains"
+          for j in `seq 1 $nchains`;
+          do
+              g=$((j-1))   # index groups are numbered from 0
+
+              echo "[ Chikaterasu ] Chain $j (group $g): 1. Building covariance matrix ..."
+              printf "$g\n$g\n" | gmx covar -s md_target.tpr -f md_fit.xtc -n ../../chika.ndx -o pca/eigenval_$j.xvg -av pca/average_$j.pdb -v pca/eigenvec_$j.trr -l pca/covar_$j.log -b $anatime
+
+              echo "[ Chikaterasu ] Chain $j (group $g): 2. Analyze first three eigenvectors ..."
+              printf "$g\n$g\n" | gmx anaeig -s md_target.tpr -f md_fit.xtc -n ../../chika.ndx -v pca/eigenvec_$j.trr -first 1 -last 3 -extr pca/extreme_pcavec_chain${j}_.pdb -nframes 30 -entropy
+
+              echo "[ Chikaterasu ] Chain $j (group $g): 3. Plot first 3 PCA vectors as 2D maps ..."
+              printf "$g\n$g\n" | gmx anaeig -s md_target.tpr -f md_fit.xtc -n ../../chika.ndx -v pca/eigenvec_$j.trr -2d pca/2dproj_12_$j.xvg -first 1 -last 2
+              printf "$g\n$g\n" | gmx anaeig -s md_target.tpr -f md_fit.xtc -n ../../chika.ndx -v pca/eigenvec_$j.trr -2d pca/2dproj_13_$j.xvg -first 1 -last 3
+          done
+      fi
   fi
 
   : '
