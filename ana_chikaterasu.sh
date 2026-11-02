@@ -21,17 +21,17 @@ etc.
 *************************************************************
 '
 cleanup=true
+on_the_fly=false    # analyze a currently active run or a run that has been aborted (i.e., chikaterasu.sh did not finish and thus did not rename folder md to md_1)
 
 # == Most important parameters (most often set wrong :)) ==
 dna=false           # DNA or protein?
-fit=true            # rot_trans fit before analysis. AVOID for RheoMD if studying alignment
+fit=true            # rot_trans fit before analysis. Avoid this for if studying alignment per se (e.g. rheology, rot. diffusion)
 pbc=mol             # mol (default) or nojump (for protein complexes)
 
 # == Where are the data? How many runs? ==
 proc_folder="md_"   # PREFIX for folders, e.g. md for md_1, md_2, ...
 nruns=1             # total number of runs (3 ~ 20)
 anatime=0           # analyze frames starting at time t [ps]
-on_the_fly=false    # analyze a currently active run or a run that has been aborted (chikaterasu did not finish and did not rename folder md to md_1)
 
 # == What to analyze? ==
 rmsd=true
@@ -40,19 +40,19 @@ traj=true
 vmd=false           # Creates a folder vmd with ready-to-use gro/xtc file for viewing in VMD or to start a new universe in MDAnalysis
 gyration=false      # Calculate radius of gyration
 hbond=false         # Analyze hydrogen bonding pattern
-distance=false
+distance=false      # Analyze specific distance/s over time
 sasa=false
 pca=false
 contactmap=false    # Draw contact map (mean-smallest-distance map)
+dssp=false          # Analyze secondary structure using DSSP definition
 dipole=false
 
-hbond_ATP=false     # Custom function for ATP research; have to specify group number "13" instead of name "ATP" bug?
+hbond_ATP=false     # Custom function for ATP research; have to specify group number "13" instead of name "ATP"
 domain_angle=false  # Custom function for diUb research
 
 paxis=false         # Use gromacs to calculate principal axis. This can flip the axis since vector is unsigned.
 signedPaxis=false   # Do we want to get the signed vector of the principal axis? Requires helper script [chika_paxis.py] 
 
-dssp=false
 indexFileProvided=false  # Are you providing a file with the atom numbers for analysis? [chika.ndx]
 
 dt=10               # time interval for various analysis functions     [ps] e.g. rms, rmsf, hbond
@@ -121,11 +121,10 @@ proximal_ID=1
 Setup directories for the run
 *************************************************************
 '
-
-read -p "[Chikaterasu-dev] Starting analysis." dummy
+read -p "[Chikaterasu] Starting analysis." dummy
 
 if [ "$cleanup" = true ] ; then
-    read -p "[Chikaterasu-dev] Chikaterasu will clean up the results folder to save disk space! Abort if necessary." dummy
+    read -p "[Chikaterasu] Chikaterasu will clean up the results folder to save disk space! Abort with [CTRL+C] if necessary." dummy
     rm -rf results
 fi
 
@@ -167,7 +166,7 @@ do
   *************************************************************
   '
   if [ "$on_the_fly" = true ] ; then
-    read -p "[Chikaterasu-dev] Chikaterasu will try to analyze a currently on-going run! Abort if necessary." dummy
+    read -p "[Chikaterasu] Chikaterasu will try to analyze a currently on-going run! Abort if necessary." dummy
     cp ./runs/md/md.xtc ./results/$proc_folder/
     cp ./runs/md/md.tpr ./results/$proc_folder/
     cd ./results/$proc_folder  
@@ -329,8 +328,9 @@ do
   : '
   *************************************************************
   VMD output
-  If we want to open the trajectory in VMD, we need a gro
+  If we want to open the xtc-trajectory in VMD, we need a gro
   file of our target (system without water) topology.
+  Note that VMD can read (traj) pdb files as it is.
   *************************************************************
   '
   if [ "$vmd" = true ] ; then
@@ -366,8 +366,8 @@ do
       #   (so, there should be no other sections in this file; this would confuse the final output).
       # * To achieve that, we use awk to so that only this section is in the data is in the ndx that will be the input for the perl script.
 
-      # read -p "[Chikaterasu-dev] Make sure that plot_hbmap.pl is in the PATH and executable." dummy
-      echo "[Chikaterasu-dev] Attempting to call the perl script for hydrogen bond analysis (make sure it is in path and exectuable)."
+      # read -p "[Chikaterasu] Make sure that plot_hbmap.pl is in the PATH and executable." dummy
+      echo "[Chikaterasu] Attempting to call the perl script for hydrogen bond analysis (make sure it is in path and exectuable)."
       awk '/hbond/{y=1;next}y' hbond.ndx > analyze.ndx
       plot_hbmap.pl -s ../target.pdb -map hbmap.xpm -index analyze.ndx
 
