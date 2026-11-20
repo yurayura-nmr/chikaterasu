@@ -353,7 +353,7 @@ do
   if [ "$hbond" = true ] ; then
        printf "\n**************** Hydrogen Bonding Analysis ***************\n\n"
       cd hbond
-      printf "MainChain+H\nMainChain+H" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn hbond.ndx -num backbone_backbone.xvg -dt $dt
+      printf "MainChain+H\nMainChain+H" | gmx hbond-legacy -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn hbond.ndx -num backbone_backbone.xvg -dt $dt
       
       # *************************************************************
       # Extract specific hydrogen bonds in table-form using Justin's script
@@ -374,12 +374,12 @@ do
       # *************************************************************
 
       # Continue with other hydrogen bond analyses ...
-      printf "Protein\nProtein" | gmx hbond -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn -num protein_protein.xvg -dt $dt
+      printf "Protein\nProtein" | gmx hbond-legacy -f ../md_target.xtc -s ../md_target.tpr -hbm -hbn -num protein_protein.xvg -dt $dt
 
-      #printf "Protein\nWater" | gmx hbond -f md_full.xtc -s md.tpr -num hbond/protein_water.xvg
+      #printf "Protein\nWater" | gmx hbond-legacy -f md_full.xtc -s md.tpr -num hbond/protein_water.xvg
       if [ "$hbond_ATP" = true ] ; then
-          printf "Protein\n13" | gmx hbond -f ../md_full.xtc -s ../md.tpr -num protein_ATP.xvg
-          printf "Water\n13" | gmx hbond -f ../md_full.xtc -s ../md.tpr -num ATP_water.xvg
+          printf "Protein\n13" | gmx hbond-legacy -f ../md_full.xtc -s ../md.tpr -num protein_ATP.xvg
+          printf "Water\n13" | gmx hbond-legacy -f ../md_full.xtc -s ../md.tpr -num ATP_water.xvg
       fi
       cd ..
   fi
